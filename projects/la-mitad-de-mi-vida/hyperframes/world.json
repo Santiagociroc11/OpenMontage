@@ -1,0 +1,4 @@
+{"project": "projects/la-mitad-de-mi-vida", "plan": "skills/pipelines/concert-visuals/engine/plan_example_la_mitad.py",
+ "song_map": "projects/la-mitad-de-mi-vida/song_map/la-mitad-de-mi-vida.json",
+ "track": "_audio_fuera_del_repo/La Mitad De Mi Vida - TIKO DURAN.wav",
+ "images": "projects/la-mitad-de-mi-vida/hyperframes/v3_images", "name": "la-mitad-de-mi-vida", "fps": 30}

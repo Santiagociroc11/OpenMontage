@@ -1,0 +1,456 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=1920, height=1080" />
+    <title>La mitad de mi vida — clip</title>
+    <script src="vendor/gsap.min.js"></script>
+    <script type="importmap">
+      { "imports": { "three": "./vendor/three.module.min.js" } }
+    </script>
+    <style>
+      @font-face { font-family: "Brush"; src: url("fonts/BRUSHSCI.TTF") format("truetype"); }
+      @font-face { font-family: "Impact2"; src: url("fonts/impact.ttf") format("truetype"); }
+      body { margin: 0; background: #000; }
+      #root { position: relative; width: 1920px; height: 1080px; overflow: hidden; }
+      .layer { position: absolute; inset: 0; }
+      #fx-layer { position: absolute; inset: 0; width: 1920px; height: 1080px; display: block; }
+
+      /* Warhol: 3x2 celdas, fondo de color + silueta de color + tinta */
+      .wh { position: absolute; inset: 0; opacity: 0; }
+      .cell { position: absolute; width: 640px; height: 540px; overflow: hidden; display: block; }
+      .cell .sil, .cell .ink { position: absolute; left: 176px; top: 20px; width: 287px; height: 520px; display: block; }
+      .cell .sil { -webkit-mask-image: url("images/sil.png"); -webkit-mask-size: 100% 100%; mask-image: url("images/sil.png"); mask-size: 100% 100%; }
+      .cell.flip .sil, .cell.flip .ink { transform: scaleX(-1); }
+
+      /* TIKO gigante */
+      .tk-wrap { position: absolute; left: -200px; top: -120px; width: 2320px; height: 1320px; opacity: 0; transform: rotate(-7deg); }
+      .tk-row { position: absolute; left: 0; height: 330px; white-space: nowrap; display: block;
+        font-family: "Impact2"; font-size: 300px; line-height: 330px; letter-spacing: 0.02em; }
+
+      /* Logo */
+      .logo { position: absolute; display: flex; flex-direction: column; align-items: center; opacity: 0; }
+      .logo .tk { display: block; font-family: "Brush"; color: #ffe08a; line-height: 0.9; -webkit-text-stroke: 4px #4a0030; }
+      .logo .dn { display: block; font-family: "Impact2"; color: #fff; letter-spacing: 0.12em; line-height: 1; -webkit-text-stroke: 4px #1a0040; }
+      #logo { left: 460px; top: 260px; width: 1000px; }
+      #logo .tk { font-size: 280px; } #logo .dn { font-size: 220px; }
+      #photo { position: absolute; left: 1100px; top: 140px; width: 780px; display: block; opacity: 0; }
+
+      /* Acentos de letra: pequeños, arriba, secundarios */
+      .lyr { position: absolute; left: 0; top: 70px; width: 1920px; display: flex; justify-content: center; opacity: 0; }
+      .lyr span { display: block; white-space: nowrap; }
+      .lyr.k span { font-family: "Impact2"; font-size: 92px; color: #fff; text-transform: uppercase; transform: skewX(-9deg);
+        -webkit-text-stroke: 3px #1c0418; letter-spacing: 0.02em; }
+      .lyr.hero span { font-family: "Brush"; font-size: 140px; color: #fff4d6; -webkit-text-stroke: 3px #4a0030; }
+
+      /* v3 — capas estilo VJ Rauw */
+      .ov { position: absolute; inset: 0; opacity: 0; }
+      .frame { position: absolute; overflow: hidden; background: #111; display: block; }
+      .frame img { position: absolute; left: 0; top: 0; width: 100%; display: block; }
+      .tv { position: absolute; display: block; background-image: url("images/bw_face.png"); background-size: 640px 540px; background-repeat: no-repeat; }
+      .cw { position: absolute; left: 820px; width: 1200px; height: 170px; display: block; white-space: nowrap;
+        font-family: "Impact2"; font-size: 160px; line-height: 170px; letter-spacing: 0.01em; transform: skewX(-6deg); }
+      .big { position: absolute; left: 0; width: 1920px; display: flex; justify-content: center; }
+      .big span { display: block; font-family: "Impact2"; color: #fff; transform: skewX(-10deg); letter-spacing: 0.01em; line-height: 0.92; white-space: nowrap; }
+      .wcell { position: absolute; width: 384px; height: 540px; overflow: hidden; display: block; }
+      .wcell img { position: absolute; left: 62px; top: 24px; width: 260px; display: block; }
+      .wcell .s { position: absolute; left: 62px; top: 24px; width: 260px; height: 471px; display: block; background: #1c0418;
+        -webkit-mask-image: url("images/sil.png"); -webkit-mask-size: 100% 100%; mask-image: url("images/sil.png"); mask-size: 100% 100%; }
+    </style>
+  </head>
+  <body>
+    <div id="root" data-composition-id="main" data-width="1920" data-height="1080" data-duration="__DURATION__">
+      <section id="fx" class="clip layer" data-start="0" data-duration="__DURATION__" data-track-index="1">
+        <canvas id="fx-layer" width="1920" height="1080"></canvas>
+      </section>
+      <section id="overlays" class="clip layer" data-start="0" data-duration="__DURATION__" data-track-index="2">
+__OVERLAYS__
+      </section>
+    </div>
+
+    <script>
+      window.SHOW = __SHOW__;
+      window.__timelines = window.__timelines || {};
+      const tl = gsap.timeline({ paused: true });
+      tl.set({}, {}, window.SHOW.duration);
+      window.__timelines["main"] = tl;
+    </script>
+
+    <script type="module">
+      import * as THREE from "three";
+      const SH = window.SHOW;
+      const canvas = document.getElementById("fx-layer");
+      const renderer = new THREE.WebGLRenderer({ canvas, antialias: false, alpha: false });
+      renderer.setSize(1920, 1080, false);
+      renderer.setPixelRatio(1);
+      const scene = new THREE.Scene();
+      const camera = new THREE.OrthographicCamera(-1, 1, 1, -1, 0, 1);
+      const V3 = () => new THREE.Vector3();
+      const U = {
+        uRes: { value: new THREE.Vector2(1920, 1080) }, uT: { value: 0 }, uPh: { value: 0 },
+        uLo: { value: 0 }, uHi: { value: 0 }, uB: { value: new Array(16).fill(0) },
+        uY: { value: V3() }, uInk: { value: V3() },
+        uSA: { value: 1 }, uPA: { value: V3() }, uEA: { value: 1 }, uTA: { value: 0 },
+        uSB: { value: 1 }, uPB: { value: V3() }, uEB: { value: 1 }, uTB: { value: 0 },
+        uMix: { value: 1 }, uFrame: { value: 0 }, uWipe: { value: 0 },
+      };
+      const frag = `
+        precision highp float;
+        uniform vec2 uRes; uniform float uT, uPh, uLo, uHi, uMix, uFrame, uWipe;
+        uniform float uB[16];
+        uniform vec3 uY, uInk;
+        uniform float uSA, uEA, uTA, uSB, uEB, uTB;
+        uniform vec3 uPA, uPB;
+        varying vec2 vUv;
+        #define PI 3.14159265
+        #define TAU 6.2831853
+        float hash(vec2 p){ p = fract(p*vec2(123.34, 456.21)); p += dot(p, p+45.32); return fract(p.x*p.y); }
+        float noise(vec2 p){ vec2 i=floor(p), f=fract(p); f=f*f*(3.0-2.0*f);
+          return mix(mix(hash(i),hash(i+vec2(1,0)),f.x), mix(hash(i+vec2(0,1)),hash(i+vec2(1,1)),f.x), f.y); }
+        float fbm(float x){ return noise(vec2(x, 1.7))*0.6 + noise(vec2(x*2.3, 5.1))*0.3 + noise(vec2(x*5.1, 9.3))*0.1; }
+        mat2 rot(float a){ float c=cos(a), s=sin(a); return mat2(c,-s,s,c); }
+        float band(float j){ float v = 0.0; for (int k = 0; k < 16; k++) { if (float(k) == j) v = uB[k]; } return v; }
+        // latido suave: 1 en el beat, cae en el resto
+        float beatK(float ph){ return exp(-fract(ph)*3.5); }
+        vec3 W = vec3(1.0);
+
+        // 1 — Sol gigante con rayos
+        vec3 sSol(vec2 p, vec3 P, float e, float ph, float t){
+          float seg = floor(ph/16.0);
+          vec2 c = vec2(0.0, -0.04);
+          float r = length(p-c), a = atan(p.y-c.y, p.x-c.x);
+          vec3 bg = mix(mix(P, uY, 0.55), P, smoothstep(-0.55, 0.45, p.y));
+          float n = 14.0 + 4.0*mod(seg, 2.0);
+          float dir = mod(seg, 2.0) < 1.0 ? 1.0 : -1.0;
+          float w = 0.5 + 0.5*cos(a*n + dir*ph*0.55*e);
+          float ray = smoothstep(0.45, 0.55, w) * smoothstep(1.4, 0.15, r);
+          vec3 col = mix(bg, mix(bg, uY*1.05, 0.65), ray);
+          float b = beatK(ph);
+          float R = 0.21 + 0.012*b*e;
+          float ripple = fract(ph*0.5);
+          col += uY * exp(-pow((r - (R + ripple*0.9))/0.012, 2.0)) * (1.0-ripple) * 0.35;
+          col += uY * exp(-max(r-R, 0.0)*7.0) * 0.55;
+          col = mix(col, mix(uY, W, 0.35), smoothstep(R+0.004, R-0.004, r));
+          return col;
+        }
+        // 13 — Bombillas de marquesina
+        vec3 sBombillas(vec2 p, vec3 P, float e, float ph, float t){
+          float mode = mod(floor(ph/16.0), 3.0);
+          vec3 col = mix(uInk, P*0.35, 0.5 + 0.5*p.y);
+          float S = 0.052;
+          vec2 g = p/S; vec2 id = floor(g), f = fract(g) - 0.5;
+          vec2 c = (id + 0.5)*S;
+          float lit;
+          if (mode < 1.0) lit = step(0.55, fract((id.x + id.y)*0.08 - ph*0.5*e));
+          else if (mode < 2.0) lit = step(0.6, fract(length(c)*3.0 - ph*0.5*e));
+          else { vec2 q = c*vec2(1.0, -1.0)*2.4 + vec2(0.0, 0.25);
+            float hv = pow(q.x*q.x + q.y*q.y - 0.3, 3.0) - q.x*q.x*q.y*q.y*q.y;
+            lit = step(hv, 0.0) * (0.55 + 0.45*beatK(ph)) + step(0.0, hv)*step(0.85, hash(id + floor(ph)))*0.6; }
+          vec3 bc = mod(id.x + id.y, 2.0) < 1.0 ? uY : mix(uY, W, 0.5);
+          if (mode > 1.5) bc = mix(P, W, 0.25);
+          float d = length(f);
+          float core = smoothstep(0.24, 0.18, d);
+          col = mix(col, uInk*1.3 + P*0.12, core);
+          col += bc * (core*lit*1.1 + exp(-d*7.0)*lit*0.45);
+          // marco de cartel con bombillas que persiguen
+          vec2 b = abs(p) - vec2(0.82, 0.44);
+          float frame = smoothstep(0.03, 0.02, abs(max(b.x, b.y)));
+          float along = (p.x + p.y)*30.0;
+          float chase = step(0.5, fract(along*0.25 - ph*e));
+          col = mix(col, mix(P, uY, chase), frame);
+          return col;
+        }
+
+        float lineD(float d, float w){ return smoothstep(w, w*0.25, d); }
+        vec3 neonC(float d, vec3 c, float w, float g){ return c*(lineD(d, w) + exp(-d*g)*0.45) + W*lineD(d, w*0.4)*0.5; }
+        // 2 — Muro monocromo + cajas de luz laterales (foto enmarcada en DOM)
+        vec3 sMono(vec2 p, vec3 P, float e, float ph, float t){
+          vec3 col = P*(0.9 + 0.1*beatK(ph));
+          vec2 q = vec2(abs(p.x) - 0.715, p.y);
+          if (abs(q.x) < 0.15 && abs(q.y) < 0.40) {
+            vec2 g = q/0.1; vec2 id = floor(g), f = fract(g) - 0.5;
+            float sq = step(max(abs(f.x), abs(f.y)), 0.32);
+            float m = mod(floor(ph/4.0), 3.0);
+            float lit = m < 1.0 ? step(0.5, fract((id.y + floor(ph))*0.5)) : (m < 2.0 ? step(0.5, fract((id.x + id.y + floor(ph))*0.5)) : beatK(ph + abs(id.y)*0.25));
+            col = mix(col, mix(P*0.55, W, lit), sq);
+          }
+          return col;
+        }
+        // 3 — Arcos de línea blanca concéntricos
+        float archD(vec2 p, vec2 c, float r){ vec2 q = p - c; return q.y > 0.0 ? abs(length(q) - r) : abs(abs(q.x) - r); }
+        vec3 sArcos(vec2 p, vec3 P, float e, float ph, float t){
+          vec3 col = uInk*0.35 + P*0.08*smoothstep(0.6, -0.5, p.y);
+          for (int k = 0; k < 6; k++) {
+            float fk = float(k);
+            float d = archD(p, vec2(0.0, -0.05), 0.30 + fk*0.07);
+            float b = 0.3 + 0.7*exp(-mod(ph - fk, 6.0)*1.3);
+            col += W*lineD(d, 0.005)*b + P*exp(-d*70.0)*0.35*b;
+          }
+          for (int k = 0; k < 3; k++) {
+            float fk = float(k);
+            vec2 sp = vec2(abs(p.x), p.y);
+            float d = archD(sp, vec2(0.66, -0.12), 0.07 + fk*0.045);
+            col += W*lineD(d, 0.004)*(0.4 + 0.6*beatK(ph + fk*0.33));
+          }
+          return col;
+        }
+        // 4 — Neón geométrico de contorno sobre negro
+        vec3 sNeon(vec2 p, vec3 P, float e, float ph, float t){
+          float seg = mod(floor(ph/16.0), 4.0);
+          vec3 c = seg < 1.0 ? P : (seg < 2.0 ? uY : (seg < 3.0 ? vec3(0.1, 0.9, 1.0) : vec3(0.35, 1.0, 0.3)));
+          float pulse = beatK(ph);
+          vec2 q = rot(ph*0.05*e) * p;
+          float d = abs(abs(q.x) + abs(q.y) - 0.30 - 0.015*pulse);
+          d = min(d, abs(max(abs(q.x), abs(q.y)) - 0.19));
+          d = min(d, abs(length(q) - 0.43));
+          vec2 qr = rot(-ph*0.08*e) * p;
+          for (int i = 0; i < 4; i++) { float a = float(i)*PI*0.5 + PI*0.25; d = min(d, abs(length(qr - 0.15*vec2(cos(a), sin(a))) - 0.15)); }
+          vec2 s = vec2(abs(p.x) - 0.66, p.y);
+          vec2 sq = rot(ph*0.1*e) * s;
+          d = min(d, abs(max(abs(sq.x), abs(sq.y)) - 0.12));
+          d = min(d, abs(length(s) - 0.2 - 0.02*pulse));
+          return uInk*0.15 + neonC(d, c, 0.006, 45.0)*(0.75 + 0.45*pulse);
+        }
+        // 5 — Puntos amarillos + triángulos sólidos + cuadros neón
+        vec3 sPuntos(vec2 p, vec3 P, float e, float ph, float t){
+          vec3 col = uInk*0.2;
+          vec2 g = p/0.085; vec2 id = floor(g), f = fract(g) - 0.5;
+          float sz = 0.12 + 0.28*(0.5 + 0.5*sin(id.x*0.55 + id.y*0.35 - ph*PI*0.5*e));
+          col = mix(col, uY, smoothstep(sz, sz - 0.04, length(f)));
+          float br = 0.55 + 0.45*beatK(ph);
+          float tri = step(abs(p.x), 0.89) * step(0.89 - abs(p.x), (0.5 - abs(p.y))*0.75*br);
+          col = mix(col, P, tri);
+          for (int i = 0; i < 2; i++) {
+            float fi = float(i)*2.0 - 1.0;
+            vec2 q = rot(ph*0.12*e*fi) * (p - vec2(0.42*fi, 0.18*fi));
+            float d = abs(max(abs(q.x), abs(q.y)) - 0.1);
+            col += neonC(d, mix(P, W, 0.3), 0.005, 50.0);
+          }
+          return col;
+        }
+        // 6 — Muro de TVs retro (las 4 centrales muestran la cara, en DOM)
+        vec3 sTvs(vec2 p, vec3 P, float e, float ph, float t){
+          vec2 uv = vec2(p.x/1.7778 + 0.5, p.y + 0.5);
+          vec2 g = uv*vec2(6.0, 4.0); vec2 id = floor(g), f = fract(g);
+          vec3 bez = mix(vec3(0.16, 0.13, 0.11), vec3(0.32, 0.31, 0.3), step(0.5, hash(id + 3.1)));
+          vec2 sc = abs(f - 0.5) - vec2(0.42, 0.38);
+          float scr = step(max(sc.x, sc.y), 0.0);
+          bool center = id.x > 1.5 && id.x < 3.5 && id.y > 0.5 && id.y < 2.5;
+          vec3 c = vec3(0.0);
+          if (!center) {
+            float m = floor(hash(id + floor(ph*0.5)*1.7)*5.0);
+            if (m < 1.0) c = vec3(hash(floor(vUv*uRes/3.0) + floor(t*30.0)))*0.9;
+            else if (m < 2.0) { float bi = floor(f.x*7.0);
+              c = bi < 1.0 ? vec3(0.75) : bi < 2.0 ? vec3(0.75, 0.75, 0.0) : bi < 3.0 ? vec3(0.0, 0.75, 0.75) : bi < 4.0 ? vec3(0.0, 0.75, 0.0) : bi < 5.0 ? vec3(0.75, 0.0, 0.75) : bi < 6.0 ? vec3(0.75, 0.0, 0.0) : vec3(0.0, 0.0, 0.75); }
+            else if (m < 3.0) c = P;
+            else if (m < 4.0) c = uY;
+            else c = vec3(0.04);
+            c *= 0.85 + 0.15*step(0.5, fract(f.y*60.0));
+          }
+          vec3 col = mix(bez*(0.8 + 0.2*f.y), c, scr);
+          col *= smoothstep(0.0, 0.03, min(min(f.x, 1.0 - f.x), min(f.y, 1.0 - f.y)));
+          return col;
+        }
+        // 7 — Collage editorial rojo / negro / blanco
+        vec3 sCollage(vec2 p, vec3 P, float e, float ph, float t){
+          float k = floor(ph);
+          vec2 j = (vec2(hash(vec2(k, 1.0)), hash(vec2(k, 2.0))) - 0.5)*0.012;
+          vec3 col = P;
+          vec2 q1 = rot(-0.07) * (p - vec2(-0.5, 0.0) - j);
+          if (max(abs(q1.x) - 0.36, abs(q1.y) - 0.47) < 0.0) {
+            vec2 hf = fract(q1/0.028) - 0.5;
+            col = mix(uInk*0.6, P*0.8, smoothstep(0.22, 0.18, length(hf))*0.6);
+          }
+          vec2 q2 = rot(0.05) * (p - vec2(0.42, -0.4) + j);
+          if (max(abs(q2.x) - 0.55, abs(q2.y) - 0.055) < 0.0) col = W;
+          vec2 q3 = p - vec2(0.62, 0.3) - j*2.0;
+          float bx = abs(max(abs(q3.x) - 0.2, abs(q3.y) - 0.13));
+          float inside = step(max(abs(q3.x) - 0.2, abs(q3.y) - 0.13), 0.0);
+          float dg = min(abs(q3.x*0.13 - q3.y*0.2), abs(q3.x*0.13 + q3.y*0.2)) / 0.239;
+          col = mix(col, W, max(lineD(bx, 0.004), lineD(dg, 0.004)*inside));
+          return col;
+        }
+        // 8 — Nombre gigante: fondo negro con líneas finas (texto en DOM)
+        vec3 sNombre(vec2 p, vec3 P, float e, float ph, float t){
+          vec3 col = uInk*0.15;
+          col += P*0.35*step(0.93, fract(p.y*14.0 - ph*0.25*e));
+          float bar = step(0.44, abs(p.y));
+          return mix(col, P, bar);
+        }
+        // 9 — Rejilla 3D de alambre neón
+        vec3 sRejilla(vec2 p, vec3 P, float e, float ph, float t){
+          vec3 col = uInk*0.15;
+          float h = abs(p.y) - 0.04;
+          if (h > 0.0) {
+            float z = 0.22/h;
+            vec2 gp = vec2(p.x*z, z + ph*0.5*e);
+            vec2 gf = abs(fract(gp) - 0.5);
+            vec2 fw = fwidth(gp);
+            float ln = max(smoothstep(fw.x*2.5 + 0.02, 0.0, 0.5 - gf.x), smoothstep(fw.y*2.5 + 0.02, 0.0, 0.5 - gf.y));
+            col += (P*1.4 + W*0.25)*ln*exp(-z*0.06)*(0.9 + 0.5*beatK(ph));
+          }
+          col += uY*exp(-abs(p.y)*30.0)*0.8;
+          return col;
+        }
+        // 10 — Paneles Warhol (celdas en DOM, fondo negro)
+        vec3 sWarhol(vec2 p, vec3 P, float e, float ph, float t){ return uInk*0.3; }
+        // 11 — Diana concéntrica
+        vec3 sDiana(vec2 p, vec3 P, float e, float ph, float t){
+          float r = length(p);
+          float v = r*7.0 - ph*0.5*e;
+          float i = mod(floor(v), 3.0);
+          vec3 col = i < 1.0 ? P : (i < 2.0 ? mix(P, W, 0.45) : uInk*0.5);
+          for (int k = 0; k < 6; k++) {
+            float a = float(k)*TAU/6.0 + ph*0.1*e;
+            vec2 c = 0.4*vec2(cos(a)*1.25, sin(a));
+            vec2 q = rot(a) * (p - c);
+            float oct = max(max(abs(q.x), abs(q.y)), (abs(q.x) + abs(q.y))*0.7071);
+            col = mix(col, uY, step(oct, 0.05 + 0.012*beatK(ph)));
+          }
+          return col;
+        }
+        // 12 — Marcos de neón en túnel (foto al centro en DOM)
+        vec3 sMarco(vec2 p, vec3 P, float e, float ph, float t){
+          vec3 col = uInk*0.2;
+          for (int k = 0; k < 8; k++) {
+            float s = fract((float(k) - ph*0.5*e)/8.0);
+            vec2 sz = vec2(0.889, 0.5)*(0.25 + 1.1*s*s);
+            float d = abs(max(abs(p.x) - sz.x, abs(p.y) - sz.y));
+            vec3 c = mod(float(k), 4.0) < 0.5 ? uY : P;
+            col += neonC(d, c, 0.005, 60.0)*smoothstep(0.0, 0.15, s);
+          }
+          return col;
+        }
+        // 14 — Sombrero vueltiao: anillos con trenza de rombos
+        vec3 sSombrero(vec2 p, vec3 P, float e, float ph, float t){
+          float r = length(p);
+          float i = floor(r/0.055);
+          float dir = mod(i, 2.0) < 1.0 ? 1.0 : -1.0;
+          float a = atan(p.y, p.x) + dir*ph*0.04*e;
+          float n = 10.0 + i*5.0;
+          float u = fract(a*n/TAU), v = fract(r/0.055);
+          vec3 cream = vec3(0.96, 0.91, 0.78);
+          float dm = step(abs(u - 0.5) + abs(v - 0.5), 0.36);
+          vec3 col = mod(i, 5.0) > 3.5 ? mix(P, cream, dm*0.0) : mix(cream, uInk, dm);
+          col = mix(col, uInk, lineD(min(v, 1.0 - v), 0.06));
+          col = mix(col, uInk, step(r, 0.07));
+          return col * (0.92 + 0.08*beatK(ph));
+        }
+        vec3 sceneCol(float id, vec2 p, vec3 P, float e, float ph, float t){
+          if (id < 1.5) return sSol(p, P, e, ph, t);
+          if (id < 2.5) return sMono(p, P, e, ph, t);
+          if (id < 3.5) return sArcos(p, P, e, ph, t);
+          if (id < 4.5) return sNeon(p, P, e, ph, t);
+          if (id < 5.5) return sPuntos(p, P, e, ph, t);
+          if (id < 6.5) return sTvs(p, P, e, ph, t);
+          if (id < 7.5) return sCollage(p, P, e, ph, t);
+          if (id < 8.5) return sNombre(p, P, e, ph, t);
+          if (id < 9.5) return sRejilla(p, P, e, ph, t);
+          if (id < 10.5) return sWarhol(p, P, e, ph, t);
+          if (id < 11.5) return sDiana(p, P, e, ph, t);
+          if (id < 12.5) return sMarco(p, P, e, ph, t);
+          if (id < 13.5) return sBombillas(p, P, e, ph, t);
+          return sSombrero(p, P, e, ph, t);
+        }
+        void main(){
+          vec2 px = vUv*uRes;
+          vec2 p = (px - 0.5*uRes)/uRes.y;
+          vec3 col = sceneCol(uSB, p, uPB, uEB, uPh, uT - uTB);
+          if (uMix < 0.999) {
+            // Transición geométrica: la escena nueva crece dentro de una forma desde el centro.
+            float w = mod(uWipe, 5.0), k = uMix, d;
+            if (w < 1.0) d = length(p) - k*1.05;
+            else if (w < 2.0) d = (abs(p.x) + abs(p.y))*0.7071 - k*1.0;
+            else if (w < 3.0) d = abs(p.y) - k*0.5;
+            else if (w < 4.0) d = abs(p.x) - k*0.8889;
+            else d = max(abs(p.x)*0.5625, abs(p.y)) - k*0.5;
+            vec3 a = sceneCol(uSA, p, uPA, uEA, uPh, uT - uTA);
+            col = mix(a, col, step(d, 0.0));
+            col = mix(col, W, smoothstep(0.006, 0.0015, abs(d))*step(0.001, k));
+          }
+          gl_FragColor = vec4(clamp(col, 0.0, 1.0), 1.0);
+        }`;
+      const mat = new THREE.ShaderMaterial({ uniforms: U,
+        vertexShader: "varying vec2 vUv; void main(){ vUv = uv; gl_Position = vec4(position.xy, 0.0, 1.0); }",
+        fragmentShader: frag });
+      scene.add(new THREE.Mesh(new THREE.PlaneGeometry(2, 2), mat));
+
+      const B = SH.beats, BEAT = SH.barSeconds / 4;
+      function phaseAt(t) {
+        if (t <= B[0]) return (t - B[0]) / BEAT;
+        if (t >= B[B.length - 1]) return B.length - 1 + (t - B[B.length - 1]) / BEAT;
+        let lo = 0, hi = B.length - 1;
+        while (hi - lo > 1) { const m = (lo + hi) >> 1; if (B[m] <= t) lo = m; else hi = m; }
+        return lo + (t - B[lo]) / (B[lo + 1] - B[lo]);
+      }
+      const ss = (x) => x * x * (3 - 2 * x);
+      const clamp01 = (x) => Math.max(0, Math.min(1, x));
+      const hex = (h) => [1, 3, 5].map((i) => parseInt(h.substr(i, 2), 16) / 255);
+      U.uY.value.set(...hex(SH.yellow)); U.uInk.value.set(...hex(SH.ink));
+      const A = SH.prev, C = SH.cur;
+      U.uSA.value = A.scene; U.uPA.value.set(...hex(A.partner)); U.uEA.value = A.energy; U.uTA.value = A.t0;
+      U.uSB.value = C.scene; U.uPB.value.set(...hex(C.partner)); U.uEB.value = C.energy; U.uTB.value = C.t0;
+      const $ = (id) => document.getElementById(id);
+      const E = SH.energy;
+
+      // Celdas Warhol (paleta de los paneles de Ana del Castillo): el color rota por beat.
+      function warhol(el, ph, partner) {
+        const cols = [SH.yellow, "#39e639", partner, "#8a2be2", "#1f4bff", "#ffffff"];
+        const k = Math.floor(ph);
+        el.querySelectorAll(".wcell").forEach((c, i) => { c.style.background = cols[(i * 2 + k) % 6]; });
+      }
+      function renderAt(time) {
+        const t = SH.start + time;
+        const ph = phaseAt(t);
+        const ft = t <= SH.songEnd ? t : SH.songEnd - 16 + ((t - SH.songEnd) % 16);
+        const f = Math.min(E.n - 1, Math.max(0, Math.round((ft - E.t0) * E.fps)));
+        U.uT.value = t; U.uPh.value = ph; U.uFrame.value = Math.round(t * 30);
+        U.uLo.value = E.low[f]; U.uHi.value = E.high[f];
+        for (let k = 0; k < 16; k++) U.uB.value[k] = E.bands[f][k];
+        const mix = SH.isFirst ? 1 : ss(clamp01((t - C.t0) / SH.xfade));
+        U.uMix.value = mix; U.uWipe.value = SH.wipe;
+        renderer.render(scene, camera);
+
+        const bk = Math.exp(-(((ph % 1) + 1) % 1) * 3.5);
+        // Capas DOM de la escena saliente (A) y entrante (C).
+        const clipCss = () => {
+          const k = mix, w = SH.wipe % 5;
+          if (k >= 0.999) return "none";
+          if (w === 0) return "circle(" + (k * 1.05 * 1080).toFixed(1) + "px at 960px 540px)";
+          if (w === 1) { const r = k * 1080 * 1.0 / 0.7071 / 2 * 2; return "polygon(960px " + (540 - r) + "px, " + (960 + r) + "px 540px, 960px " + (540 + r) + "px, " + (960 - r) + "px 540px)"; }
+          if (w === 2) return "inset(" + ((1 - k) * 540).toFixed(1) + "px 0px)";
+          if (w === 3) return "inset(0px " + ((1 - k) * 960).toFixed(1) + "px)";
+          return "inset(" + ((1 - k) * 540).toFixed(1) + "px " + ((1 - k) * 960).toFixed(1) + "px)";
+        };
+        const cc = clipCss();
+        [["A", A, mix < 0.999 ? 1 : 0], ["C", C, 1]].forEach(([k, P, o]) => {
+          document.querySelectorAll('.ov[data-k="' + k + '"]').forEach((el) => {
+            el.style.opacity = String(o);
+            if (k === "C") { el.style.clipPath = cc; el.style.webkitClipPath = cc; }
+            const kind = el.dataset.kind, lt = t - P.t0;
+            if (kind === "warhol") warhol(el, ph, P.partner);
+            if (kind === "collage") el.querySelectorAll(".cw").forEach((r, i) => {
+              const step = Math.floor(ph) % 2 ? 1 : -1; r.style.transform = "skewX(-6deg) translateX(" + ((i % 2 ? 1 : -1) * step * 14) + "px)"; });
+            if (kind === "nombre") { const sc = 1 + 0.12 * Math.exp(-lt * 2.2) + 0.015 * bk;
+              el.querySelectorAll(".big").forEach((r, i) => { r.style.transform = "translateX(" + ((i ? 1 : -1) * 60 * Math.exp(-lt * 2.5)).toFixed(1) + "px) scale(" + sc.toFixed(4) + ")"; }); }
+            const fr = el.querySelector(".frame.bt"); if (fr) fr.style.transform = "scale(" + (1 + 0.012 * bk).toFixed(4) + ")";
+          });
+        });
+        // Logo y foto (entrada suave, latido leve).
+        const show = (on0, on1) => on1 * mix + on0 * (1 - mix);
+        const lo = show(A.logo ? 1 : 0, C.logo ? 1 : 0), po = show(A.photo ? 1 : 0, C.photo ? 1 : 0);
+        const logo = $("logo"); if (logo) { logo.style.opacity = lo.toFixed(3); logo.style.transform = "scale(" + (1 + 0.03 * bk).toFixed(4) + ")"; }
+        const photo = $("photo"); if (photo) { photo.style.opacity = po.toFixed(3); photo.style.transform = "translateY(" + (Math.sin(t * 0.6) * 10).toFixed(1) + "px)"; }
+        // Acentos de letra.
+        document.querySelectorAll(".lyr").forEach((el) => {
+          const a = +el.dataset.t0, b = +el.dataset.t1;
+          const o = clamp01((t - a) / 0.25) * clamp01((b - t) / 0.35);
+          el.style.opacity = o.toFixed(3);
+          el.style.transform = "scale(" + (0.92 + 0.08 * ss(clamp01((t - a) / 0.3)) + 0.02 * bk * o).toFixed(4) + ")";
+        });
+      }
+      window.addEventListener("hf-seek", (e) => renderAt(e.detail.time));
+      renderAt(window.__hfThreeTime || 0);
+    </script>
+  </body>
+</html>

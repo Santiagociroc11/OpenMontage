@@ -1,0 +1,90 @@
+{
+  "version": "1.0",
+  "project_id": "la-mitad-de-mi-vida",
+  "decisions": [
+    {
+      "decision_id": "d-001",
+      "stage": "idea",
+      "category": "pipeline_selection",
+      "subject": "Modo de producci\u00f3n",
+      "options_considered": [
+        {
+          "option_id": "free_run",
+          "label": "Video continuo sin operador",
+          "score": 0.9,
+          "reason": "Banda en vivo sin click y nadie que opere"
+        },
+        {
+          "option_id": "vj_loops",
+          "label": "Loops por secci\u00f3n con GO",
+          "score": 0.5,
+          "reason": "Necesita operador; el usuario dijo que nadie"
+        },
+        {
+          "option_id": "song_sync",
+          "label": "Video sincronizado frame a frame",
+          "score": 0.1,
+          "reason": "La banda toca en vivo: se desfasar\u00eda"
+        }
+      ],
+      "selected": "free_run",
+      "reason": "Respuesta del usuario: banda en vivo, sin operador"
+    },
+    {
+      "decision_id": "d-002",
+      "stage": "idea",
+      "category": "concept_selection",
+      "subject": "Mundo visual",
+      "options_considered": [
+        {
+          "option_id": "mar",
+          "label": "Mar de olvido + luna partida",
+          "score": 0.9,
+          "reason": "Sale de la letra (mar, estrella, sol, la mitad)"
+        },
+        {
+          "option_id": "mitad",
+          "label": "La otra mitad (gr\u00e1fico)",
+          "score": 0.7,
+          "reason": "Limpio pero fr\u00edo para la canci\u00f3n"
+        },
+        {
+          "option_id": "caribe",
+          "label": "Noche caribe\u00f1a",
+          "score": 0.6,
+          "reason": "Festivo, menos ligado a la letra"
+        }
+      ],
+      "selected": "mar",
+      "reason": "Elegido por el usuario (era la recomendaci\u00f3n)"
+    },
+    {
+      "decision_id": "d-003",
+      "stage": "idea",
+      "category": "render_runtime_selection",
+      "subject": "Runtime de composici\u00f3n",
+      "options_considered": [
+        {
+          "option_id": "hyperframes",
+          "label": "HyperFrames (HTML/GSAP/Three.js)",
+          "score": 0.9,
+          "reason": "Lienzo a medida, shaders y mar/luna procedurales, render determinista por secciones"
+        },
+        {
+          "option_id": "remotion",
+          "label": "Remotion",
+          "score": 0.5,
+          "reason": "Disponible; mejor para montar clips, peor para un paisaje procedural continuo"
+        },
+        {
+          "option_id": "ffmpeg",
+          "label": "ffmpeg",
+          "score": 0.1,
+          "reason": "Solo une/transcodifica"
+        }
+      ],
+      "selected": "hyperframes",
+      "reason": "Los tres disponibles; se recomienda HyperFrames, pendiente de aprobaci\u00f3n del usuario en esta puerta"
+    }
+  ]
+}

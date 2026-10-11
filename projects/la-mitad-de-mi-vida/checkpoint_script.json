@@ -1,0 +1,346 @@
+{
+  "version": "1.0",
+  "project_id": "la-mitad-de-mi-vida",
+  "pipeline_type": "concert-visuals",
+  "stage": "script",
+  "status": "completed",
+  "timestamp": "2026-10-11T01:39:24.075821+00:00",
+  "checkpoint_policy": "guided",
+  "human_approval_required": true,
+  "human_approved": true,
+  "artifacts": {
+    "script": {
+      "version": "1.0",
+      "title": "La Mitad De Mi Vida \u2014 arco visual",
+      "total_duration_seconds": 392.371,
+      "sections": [
+        {
+          "id": "s01",
+          "label": "intro",
+          "text": "Negro total. El mar nocturno aparece desde la oscuridad: un horizonte fino, olas apenas visibles, la media luna asomando sobre el horizonte. Nada se mueve r\u00e1pido.",
+          "start_seconds": 0.0,
+          "end_seconds": 10.635,
+          "enhancement_cues": [
+            {
+              "type": "overlay",
+              "description": "TEXTO: 'TIKO DUR\u00c1N' entra muy lento sobre el horizonte (fundido de 3 s), serif elegante, blanco c\u00e1lido",
+              "timestamp_seconds": 3.0
+            }
+          ]
+        },
+        {
+          "id": "s02",
+          "label": "intro",
+          "text": "Debajo del nombre aparece 'La mitad de mi vida'. El reflejo de la luna se dibuja en el agua, roto en fragmentos por las olas. Los textos se disuelven antes de que entre la voz.",
+          "start_seconds": 10.635,
+          "end_seconds": 19.296,
+          "enhancement_cues": [
+            {
+              "type": "overlay",
+              "description": "TEXTO: 'La mitad de mi vida' bajo el nombre; ambos salen con fundido de 3 s hacia 0:18",
+              "timestamp_seconds": 11.0
+            }
+          ]
+        },
+        {
+          "id": "s03",
+          "label": "verso 1 + estribillo 1",
+          "text": "Estrofa: 'he so\u00f1ado contigo\u2026 mi vida es un mar de olvido\u2026 mi compa\u00f1era es la soledad'. Media luna sobre el horizonte, reflejo quebrado, niebla baja. Con el estribillo ('t\u00fa eres la mitad de mi vida', ~0:44-0:53) el mar se calma y el reflejo se alinea: la luna queda completa por primera vez. Despu\u00e9s vuelve a romperse con 'llenar\u00e9 tu vida de amor'.",
+          "start_seconds": 19.296,
+          "end_seconds": 89.443,
+          "enhancement_cues": [
+            {
+              "type": "overlay",
+              "description": "FRASE 1: 'He so\u00f1ado contigo una vez m\u00e1s' \u2014 ventana 0:22-0:31",
+              "timestamp_seconds": 22.0
+            },
+            {
+              "type": "overlay",
+              "description": "FRASE 2: 'Pero mi vida es solo un mar de olvido' / 'mi mejor compa\u00f1era es la soledad' (dos l\u00edneas) \u2014 ventana 0:32-0:41",
+              "timestamp_seconds": 32.0
+            },
+            {
+              "type": "overlay",
+              "description": "FRASE 3: 'la mitad de mi vida' sobre el horizonte con su reflejo invertido \u2014 ventana 0:42-0:58",
+              "timestamp_seconds": 42.0
+            },
+            {
+              "type": "animation",
+              "description": "MOTIVO: el agua se aquieta y el reflejo cierra el c\u00edrculo de la luna (transici\u00f3n de 4 s, tolerante a \u00b15 s)",
+              "timestamp_seconds": 44.5
+            },
+            {
+              "type": "overlay",
+              "description": "FRASE 5: 'Solo el tuyo y el m\u00edo, corazones que van solitos por esta vida' \u2014 ventana por ubicar con la alineaci\u00f3n",
+              "timestamp_seconds": 77.0
+            }
+          ]
+        },
+        {
+          "id": "s04",
+          "label": "instrumental A",
+          "text": "Arranca el instrumental: el mar despierta. Destellos de luna sobre las olas que respiran con la energ\u00eda del acorde\u00f3n; aparecen las primeras estrellas.",
+          "start_seconds": 89.443,
+          "end_seconds": 108.251,
+          "enhancement_cues": [
+            {
+              "type": "animation",
+              "description": "GR\u00c1FICO: anillos finos dorados conc\u00e9ntricos alrededor de la luna, pulsando suave con la energ\u00eda (no con cada golpe)",
+              "timestamp_seconds": 89.4
+            }
+          ]
+        },
+        {
+          "id": "s05",
+          "label": "instrumental \u2014 subida",
+          "text": "Primera subida: los destellos del agua se multiplican y el cielo gana un tono azul profundo. Las estrellas se encienden de a grupos.",
+          "start_seconds": 108.251,
+          "end_seconds": 116.541,
+          "enhancement_cues": []
+        },
+        {
+          "id": "s06",
+          "label": "instrumental",
+          "text": "Groove: el mar sigue vivo; empieza a dibujarse una constelaci\u00f3n con l\u00edneas finas que traza la mitad que le falta a la luna.",
+          "start_seconds": 116.541,
+          "end_seconds": 137.973,
+          "enhancement_cues": [
+            {
+              "type": "animation",
+              "description": "GR\u00c1FICO: l\u00edneas de constelaci\u00f3n que se dibujan lentamente (trazo de 8 s)",
+              "timestamp_seconds": 116.5
+            }
+          ]
+        },
+        {
+          "id": "s07",
+          "label": "instrumental \u2014 pico",
+          "text": "Pico del instrumental: la constelaci\u00f3n se completa, los anillos dorados se abren, el agua brilla m\u00e1s. Sigue siendo una noche oscura.",
+          "start_seconds": 137.973,
+          "end_seconds": 147.656,
+          "enhancement_cues": []
+        },
+        {
+          "id": "s08",
+          "label": "instrumental \u2014 respiro",
+          "text": "Baja la energ\u00eda: la niebla vuelve a cubrir el mar, quedan pocas estrellas. Espacio para la banda.",
+          "start_seconds": 147.656,
+          "end_seconds": 167.3,
+          "enhancement_cues": []
+        },
+        {
+          "id": "s09",
+          "label": "instrumental \u2014 pico 2",
+          "text": "Segunda ola de energ\u00eda: los destellos regresan con m\u00e1s fuerza y la constelaci\u00f3n brilla.",
+          "start_seconds": 167.3,
+          "end_seconds": 189.637,
+          "enhancement_cues": []
+        },
+        {
+          "id": "s10",
+          "label": "instrumental \u2014 respiro 2",
+          "text": "Calma: el mar se oscurece, la luna queda sola sobre el horizonte.",
+          "start_seconds": 189.637,
+          "end_seconds": 209.328,
+          "enhancement_cues": []
+        },
+        {
+          "id": "s11",
+          "label": "verso 2 (entrada)",
+          "text": "Vuelve la voz ('a mi coraz\u00f3n las penas'): niebla baja, reflejo quebrado otra vez, la imagen m\u00e1s \u00edntima de la canci\u00f3n.",
+          "start_seconds": 209.328,
+          "end_seconds": 221.054,
+          "enhancement_cues": [
+            {
+              "type": "overlay",
+              "description": "FRASE 6: 'Si supieras que a mi coraz\u00f3n las penas lo han matado' \u2014 ventana 3:34-3:41",
+              "timestamp_seconds": 214.0
+            }
+          ]
+        },
+        {
+          "id": "s12",
+          "label": "verso 2 + estribillo 2",
+          "text": "'Te regalo una estrella' (~3:42): una estrella fugaz cruza el cielo. 'Juro que cruzo el mar': un camino de luz se abre sobre el agua hacia la luna. 'En la luna y el sol buscar\u00e9 tu huella': la luna brilla y el horizonte se calienta, anunciando el sol. Con el estribillo (~3:56) el reflejo cierra el c\u00edrculo, ahora con borde dorado.",
+          "start_seconds": 221.054,
+          "end_seconds": 262.293,
+          "enhancement_cues": [
+            {
+              "type": "overlay",
+              "description": "FRASE 7: 'Si t\u00fa quieres, yo te regalo una estrella' \u2014 ventana 3:41-3:46, junto con la estrella fugaz",
+              "timestamp_seconds": 221.0
+            },
+            {
+              "type": "animation",
+              "description": "GR\u00c1FICO: estrella fugaz lenta (3 s), ventana amplia alrededor de 3:42",
+              "timestamp_seconds": 222.4
+            },
+            {
+              "type": "overlay",
+              "description": "FRASE 8: 'Por amarte, te juro que cruzo el mar' / 'en la luna y el sol buscar\u00e9 tu huella' \u2014 ventana 3:46-3:53",
+              "timestamp_seconds": 226.0
+            },
+            {
+              "type": "animation",
+              "description": "GR\u00c1FICO: camino de luz sobre el agua hacia la luna",
+              "timestamp_seconds": 227.2
+            },
+            {
+              "type": "overlay",
+              "description": "FRASE 9: 'la mitad de mi vida', m\u00e1s grande, con reflejo \u2014 ventana 3:54-4:06",
+              "timestamp_seconds": 234.0
+            },
+            {
+              "type": "overlay",
+              "description": "FRASE 10: 'Pero esta vez llenar\u00e9 tu vida de amor' \u2014 ventana 4:17-4:25",
+              "timestamp_seconds": 257.0
+            }
+          ]
+        },
+        {
+          "id": "s13",
+          "label": "instrumental final",
+          "text": "La luna desciende lentamente hacia el mar mientras el resplandor del horizonte crece. Los anillos dorados regresan.",
+          "start_seconds": 262.293,
+          "end_seconds": 299.862,
+          "enhancement_cues": []
+        },
+        {
+          "id": "s14",
+          "label": "pico final \u2014 amanecer",
+          "text": "Amanece: el sol nace en el mismo lugar donde estaba la luna y su reflejo completa el c\u00edrculo. Es el momento m\u00e1s c\u00e1lido y luminoso del video (naranja y dorado, nunca blanco).",
+          "start_seconds": 299.862,
+          "end_seconds": 318.973,
+          "enhancement_cues": [
+            {
+              "type": "animation",
+              "description": "MOTIVO: el sol y su reflejo forman el c\u00edrculo completo",
+              "timestamp_seconds": 299.9
+            }
+          ]
+        },
+        {
+          "id": "s15",
+          "label": "final + aplausos",
+          "text": "El mar en calma al amanecer. 'Un aplauso para ustedes': aparece el nombre del artista como cierre.",
+          "start_seconds": 318.973,
+          "end_seconds": 332.371,
+          "enhancement_cues": [
+            {
+              "type": "overlay",
+              "description": "TEXTO: 'TIKO DUR\u00c1N' sobre el horizonte, fundido de 3 s",
+              "timestamp_seconds": 319.0
+            }
+          ]
+        },
+        {
+          "id": "tail",
+          "label": "cola sostenible (loop)",
+          "text": "60 s de amanecer sobre el mar en loop limpio, sin texto, para que el video nunca termine antes que la banda.",
+          "start_seconds": 332.371,
+          "end_seconds": 392.371,
+          "enhancement_cues": []
+        }
+      ],
+      "metadata": {
+        "song_map_ref": "projects/la-mitad-de-mi-vida/song_map/la-mitad-de-mi-vida.json",
+        "production_mode": "free_run",
+        "motifs": {
+          "circulo_completo": [
+            "s03",
+            "s12",
+            "s14"
+          ],
+          "reflejo_roto": [
+            "s02",
+            "s03",
+            "s11"
+          ],
+          "anillos_dorados": [
+            "s04",
+            "s07",
+            "s13"
+          ],
+          "constelacion": [
+            "s06",
+            "s07",
+            "s09"
+          ],
+          "luna_y_sol": [
+            "s12",
+            "s14"
+          ]
+        },
+        "graphic_elements": {
+          "typography": "Serif elegante de alto contraste (p. ej. Cormorant Garamond), blanco c\u00e1lido; nombre del artista y t\u00edtulo en la intro/cierre + 9 frases de la letra",
+          "text_rule": "Una frase a la vez, sin karaoke: cada una entra y sale en ~1.5-3 s seg\u00fan su ventana y tolera \u00b15 s de desfase con la banda; el instrumental 1:27-3:34 no lleva texto",
+          "graphics": [
+            "anillos dorados finos alrededor de la luna",
+            "l\u00edneas de constelaci\u00f3n",
+            "estrella fugaz",
+            "camino de luz sobre el agua"
+          ],
+          "safe_zone": "textos sobre la l\u00ednea del horizonte, por encima del tercio inferior"
+        },
+        "lyric_moments": [
+          {
+            "t": 44.5,
+            "text": "t\u00fa eres la mitad de mi vida"
+          },
+          {
+            "t": 78.0,
+            "text": "son el tuyo y el m\u00edo, corazones que van solitos por esta vida"
+          },
+          {
+            "t": 222.4,
+            "text": "te regalo una estrella"
+          },
+          {
+            "t": 227.2,
+            "text": "y cruzo el mar"
+          },
+          {
+            "t": 228.1,
+            "text": "el sol buscar\u00e1 tu huella"
+          },
+          {
+            "t": 236.4,
+            "text": "la mitad de mi vida"
+          }
+        ],
+        "vocal_map": {
+          "voz": [
+            [
+              0.5,
+              82.0
+            ],
+            [
+              215.8,
+              262.6
+            ]
+          ],
+          "instrumental": [
+            [
+              82.0,
+              215.8
+            ]
+          ],
+          "aplausos": [
+            [
+              319.0,
+              332.4
+            ]
+          ],
+          "fuente": "faster-whisper small con VAD; large-v3 se abandon\u00f3 (descarga atascada en 335 MB)"
+        },
+        "lyrics_on_screen": {
+          "source": "letra oficial aportada por el usuario (LyricFind)",
+          "official_lyrics_path": "projects/la-mitad-de-mi-vida/lyrics/letra_oficial.txt",
+          "confirmed_by_user": true,
+          "song_credit": "Compositor: Felipe Pel\u00e1ez; \u00a9 Sony/ATV Music Publishing LLC",
+          "pending": "Ubicar en el tiempo los versos del tramo 1:22-3:36 (gancho 'D\u00e9jame solo darte un beso') con la alineaci\u00f3n guiada"
+        }
+      }
+    }
+  }
+}

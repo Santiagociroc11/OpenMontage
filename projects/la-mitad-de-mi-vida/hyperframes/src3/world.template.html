@@ -1,0 +1,231 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=1920, height=1080" />
+    <title>La mitad de mi vida — mundo</title>
+    <script src="vendor/gsap.min.js"></script>
+    <style>
+      @font-face { font-family: "Brush"; src: url("fonts/BRUSHSCI.TTF") format("truetype"); }
+      @font-face { font-family: "Anton"; src: url("fonts/impact.ttf") format("truetype"); }
+      @font-face { font-family: "Anton"; src: url("fonts/Anton-Regular.ttf") format("truetype"); }
+      @font-face { font-family: "Ultra"; src: url("fonts/Ultra-Regular.ttf") format("truetype"); }
+      body { margin: 0; background: #000; }
+      #root { position: relative; width: 1920px; height: 1080px; overflow: hidden; background: #ffd23a; }
+      .layer { position: absolute; inset: 0; }
+      #stage { position: absolute; left: 0; top: 0; width: 1920px; height: 1080px; transform-origin: 960px 540px; }
+      .el { position: absolute; left: 0; top: 0; display: block; opacity: 0; will-change: transform; }
+      .card { overflow: hidden; box-sizing: border-box; border: 10px solid #fff; }
+      .card img { position: absolute; left: 0; bottom: 0; width: 100%; height: 100%; object-fit: contain; object-position: center bottom; display: block; }
+      .cut img, .cut .echo { position: absolute; left: 0; top: 0; width: 100%; height: 100%; display: block; }
+      .cut .echo { -webkit-mask-size: 100% 100%; mask-size: 100% 100%; }
+      .bt { white-space: nowrap; font-family: "Anton"; line-height: 0.9; letter-spacing: 0.01em; }
+      .st { white-space: nowrap; font-family: "Anton"; padding: 10px 26px 6px; line-height: 1; }
+      .sc { overflow: hidden; box-sizing: border-box; }
+      .sc .in { position: absolute; left: 0; top: 0; width: 100%; }
+      .sc .in span { display: block; text-align: center; font-family: "Anton"; white-space: nowrap; line-height: 0.95; }
+      .ci { position: absolute; left: 0; top: 0; display: block; }
+      .ci svg { position: absolute; left: 0; top: 0; width: 100%; height: 100%; display: block; }
+      .mos img { position: absolute; display: block; object-fit: cover; }
+      .rt { white-space: nowrap; font-family: "Anton"; line-height: 0.86; overflow: hidden; padding: 0.04em 0.02em 0; }
+      .rt .ch, .br .ch { display: inline-block; will-change: transform; }
+      .br { white-space: nowrap; font-family: "Brush"; line-height: 1.1; padding: 0.1em 0.2em; }
+      .lk { overflow: hidden; box-sizing: border-box; }
+      .lk .in { position: absolute; left: 0; top: 0; width: 100%; }
+      .lk .row { display: flex; align-items: flex-start; justify-content: center; white-space: nowrap; font-family: "Anton"; line-height: 0.86; }
+      .lk .row .sm { font-size: 0.36em; line-height: 1.05; margin: 0.06em 0.06em 0; }
+      .vt { white-space: nowrap; font-family: "Anton"; line-height: 0.95; text-align: center; }
+      .tp { white-space: nowrap; font-family: "Anton"; letter-spacing: 0.02em; padding: 12px 34px 8px; line-height: 1;
+        clip-path: polygon(0% 12%, 4% 0%, 9% 10%, 15% 2%, 22% 9%, 30% 0%, 38% 8%, 46% 1%, 55% 9%, 63% 0%, 71% 8%, 79% 1%, 87% 10%, 94% 0%, 100% 9%, 98% 50%, 100% 90%, 95% 100%, 88% 91%, 80% 100%, 72% 92%, 63% 100%, 55% 91%, 46% 100%, 38% 92%, 29% 100%, 21% 91%, 13% 100%, 6% 92%, 0% 100%, 2% 50%); }
+      .hl { font-family: "Ultra"; line-height: 0.84; white-space: nowrap; }
+      .hl .ln { display: block; overflow: hidden; padding: 0.06em 0.04em 0; margin-top: -0.12em; }
+      .hl .ln .in { display: inline-flex; align-items: flex-start; will-change: transform; }
+      .hl .sup { font-size: 0.4em; line-height: 1; margin: 0.12em 0 0 0.08em; }
+      .sc::after { content: ""; position: absolute; inset: 0; background: repeating-linear-gradient(0deg, rgba(0,0,0,0.18) 0 3px, rgba(0,0,0,0) 3px 9px); }
+      .sc .in span { -webkit-text-stroke: 2px rgba(28,4,24,0.9); }
+    </style>
+  </head>
+  <body>
+    <div id="root" data-composition-id="main" data-width="1920" data-height="1080" data-duration="__DURATION__">
+      <section id="world" class="clip layer" data-start="0" data-duration="__DURATION__" data-track-index="1">
+        <div id="stage">
+__ELEMENTS__
+        </div>
+      </section>
+    </div>
+
+    <script>
+      window.SHOW = __SHOW__;
+      window.__timelines = window.__timelines || {};
+      const tl = gsap.timeline({ paused: true });
+      tl.set({}, {}, window.SHOW.duration);
+      tl.eventCallback("onUpdate", () => { if (window.__renderWorld) window.__renderWorld(tl.time()); });
+      window.__timelines["main"] = tl;
+    </script>
+
+    <script>
+      (function () {
+        const SH = window.SHOW;
+        const B = SH.beats, BEAT = SH.barSeconds / 4;
+        const clamp01 = (x) => Math.max(0, Math.min(1, x));
+        const ss = (x) => { x = clamp01(x); return x * x * (3 - 2 * x); };
+        const expoOut = (x) => { x = clamp01(x); return x >= 1 ? 1 : 1 - Math.pow(2, -10 * x); };
+        const expoIn = (x) => { x = clamp01(x); return x <= 0 ? 0 : Math.pow(2, 10 * x - 10); };
+        const p3in = (x) => { x = clamp01(x); return x * x * x; };
+        const backOut = (x) => { x = clamp01(x); const c1 = 1.9, c3 = c1 + 1; return 1 + c3 * Math.pow(x - 1, 3) + c1 * Math.pow(x - 1, 2); };
+        const backIn = (x) => { x = clamp01(x); const c1 = 1.7, c3 = c1 + 1; return c3 * x * x * x - c1 * x * x; };
+        function phaseAt(t) {
+          if (t <= B[0]) return (t - B[0]) / BEAT;
+          if (t >= B[B.length - 1]) return B.length - 1 + (t - B[B.length - 1]) / BEAT;
+          let lo = 0, hi = B.length - 1;
+          while (hi - lo > 1) { const m = (lo + hi) >> 1; if (B[m] <= t) lo = m; else hi = m; }
+          return lo + (t - B[lo]) / (B[lo + 1] - B[lo]);
+        }
+        function track(keys, t) {          // [[t, v0, v1...]] suavizado
+          if (t <= keys[0][0]) return keys[0].slice(1);
+          for (let i = 0; i < keys.length - 1; i++) {
+            const a = keys[i], b = keys[i + 1];
+            if (t < b[0]) { const k = ss((t - a[0]) / Math.max(1e-6, b[0] - a[0])); return a.slice(1).map((v, j) => v + (b[j + 1] - v) * k); }
+          }
+          return keys[keys.length - 1].slice(1);
+        }
+        function baseAt(t) { let c = SH.base[0][1]; for (const [ts, col] of SH.base) { if (ts <= t) c = col; } return c; }
+
+        // Desenfoque direccional (filtro SVG por elemento).
+        const NS = "http://www.w3.org/2000/svg", fsvg = document.createElementNS(NS, "svg");
+        fsvg.setAttribute("width", "0"); fsvg.setAttribute("height", "0"); fsvg.style.position = "absolute";
+        document.body.appendChild(fsvg);
+        let nf = 0;
+        function mkBlur() {
+          const f = document.createElementNS(NS, "filter"), id = "b" + (nf++);
+          f.setAttribute("id", id); f.setAttribute("x", "-40%"); f.setAttribute("y", "-40%"); f.setAttribute("width", "180%"); f.setAttribute("height", "180%");
+          const g = document.createElementNS(NS, "feGaussianBlur"); g.setAttribute("stdDeviation", "0 0"); f.appendChild(g); fsvg.appendChild(f);
+          return { id, g };
+        }
+
+        const root = document.getElementById("root"), stage = document.getElementById("stage");
+        const els = [...document.querySelectorAll(".el")].map((el) => {
+          const p = JSON.parse(el.dataset.p);
+          const o = { el, p, blur: p.smear ? mkBlur() : null };
+          if (p.k === "chain") o.items = [...el.querySelectorAll(".ci")];
+          if (p.k === "line") o.path = el.querySelector("path");
+          if (p.k === "cut") o.echoes = [...el.querySelectorAll(".echo")];
+          if (p.k === "sc") o.inner = el.querySelector(".in");
+          if (p.k === "sun") o.rays = el.querySelector(".rays");
+          if (p.k === "mos" || p.k === "lk") o.inner = el.querySelector(".in");
+          if (p.k === "rt" || p.k === "br") o.chars = [...el.querySelectorAll(".ch")];
+          if (p.k === "hl") o.lines = [...el.querySelectorAll(".ln .in")];
+          return o;
+        });
+
+        // Posición base de un elemento en tiempo t (deriva + bamboleo); la cámara se aplica aparte.
+        function pos(p, t) {
+          const lt = t - p.t0;
+          return [p.x + (p.vx || 0) * lt + (p.wob || 0) * Math.sin(lt * 1.3 + (p.ph || 0)),
+                  p.y + (p.vy || 0) * lt + (p.wob || 0) * 0.6 * Math.cos(lt * 1.1 + (p.ph || 0))];
+        }
+        // Entrada/salida: devuelve [dx, dy, escala, opacidad, desenfoque, dirBlur]
+        function env(p, t) {
+          const lt = t - p.t0, rem = p.t1 - t, di = p.din || 0.85, dout = p.dout || 0.7;
+          let dx = 0, dy = 0, s = 1, o = 1, bl = 0, bd = "h";
+          const a = (p.ang || 0) * Math.PI / 180, D = p.dist || 520;
+          if (lt < di) {
+            const u = lt / di;
+            if (p.in === "pop") { s = backOut(u); }
+            else if (p.in === "slide") { const e = 1 - expoOut(u); dx = -Math.cos(a) * D * e; dy = -Math.sin(a) * D * e; bl = 16 * e; bd = Math.abs(Math.cos(a)) > 0.5 ? "h" : "v"; }
+            else if (p.in === "fade") { o = ss(u); }
+            else if (p.in === "zoom") { const e = expoOut(u); s = 1.8 - 0.8 * e; o = ss(u * 2); bl = 18 * (1 - e); }
+          }
+          if (rem < dout) {
+            const u = 1 - rem / dout;
+            if (p.out === "pop") { s *= 1 - backIn(u); }
+            else if (p.out === "slide") { const e = p3in(u); dx += Math.cos(a) * D * e; dy += Math.sin(a) * D * e; bl = Math.max(bl, 14 * e); bd = Math.abs(Math.cos(a)) > 0.5 ? "h" : "v"; }
+            else if (p.out === "fade") { o *= 1 - ss(u); }
+          }
+          return [dx, dy, Math.max(0, s), o, bl, bd];
+        }
+
+        function renderAt(time) {
+          const t = SH.start + time;
+          const ph = phaseAt(t), bk = Math.exp(-(((ph % 1) + 1) % 1) * 3.5);
+          const [cx, cy, crot, cz] = track(SH.cam, t);
+          root.style.background = baseAt(t);
+          stage.style.transform = "rotate(" + crot.toFixed(3) + "deg) scale(" + cz.toFixed(4) + ")";
+          for (const o of els) {
+            const p = o.p, el = o.el;
+            if (t < p.t0 || t > p.t1) { el.style.opacity = "0"; continue; }
+            const lt = t - p.t0, d = p.d == null ? 1 : p.d;
+            let [x, y] = pos(p, t);
+            x -= cx * d; y -= cy * d;
+            let r = (p.r || 0) + (p.vr || 0) * lt, s = p.s || 1, op = 1;
+            if (p.k === "fill") {
+              const u = clamp01(lt / (p.t1 - p.t0));
+              s = 0.02 + p3in(u) * (p.s || 60);
+              el.style.opacity = "1";
+              el.style.transform = "translate(" + x.toFixed(1) + "px," + y.toFixed(1) + "px) translate(-50%,-50%) rotate(" + r.toFixed(2) + "deg) scale(" + s.toFixed(4) + ")";
+              continue;
+            }
+            const [dx, dy, es, eo, bl, bd] = env(p, t);
+            x += dx; y += dy; s *= es; op *= eo * (p.op == null ? 1 : p.op);
+            if (p.beat) s *= 1 + p.beat * bk;
+            if (p.k === "bt" || p.k === "mos") { x += (p.sx || 0) * lt; y += (p.sy || 0) * lt; }
+            if (p.k === "chain") {
+              o.items.forEach((it, i) => {
+                const ti = p.t0 + i * p.gap, u = clamp01((t - ti) / 0.45);
+                const m = clamp01((t - (p.tm + i * 0.08)) / 0.35);
+                const sc = backOut(u) * (1 + 0.12 * bk);
+                const [c, h] = it.querySelectorAll("svg");
+                c.style.transform = "scale(" + (sc * (1 - backIn(m))).toFixed(3) + ")";
+                h.style.transform = "scale(" + (sc * backOut(m)).toFixed(3) + ")";
+              });
+            }
+            if (p.k === "line") {
+              const di = p.din || 1.0, dout = p.dout || 0.8;
+              const a = ss(lt / di), b = ss(1 - (p.t1 - t) / dout);
+              o.path.style.strokeDashoffset = (1 - a + (b > 0 ? -b : 0)).toFixed(4);
+              op = 1;
+            }
+            if (p.k === "cut" && o.echoes.length) {
+              o.echoes.forEach((ec, i) => {
+                const lag = (i + 1) * (p.lag || 0.14);
+                const [px, py] = pos(p, t - lag), [qx, qy] = pos(p, t);
+                const k = (i + 1) * 0.07;
+                ec.style.transform = "translate(" + ((px - qx) * 3 + (p.ex || 18) * (i + 1)).toFixed(1) + "px," + ((py - qy) * 3 + (p.ey || -10) * (i + 1)).toFixed(1) + "px) scale(" + (1 + k * bk).toFixed(3) + ")";
+              });
+            }
+            if (p.k === "rt") {
+              const st = p.stag || 0.035, di = p.din || 0.5, dout = p.dout || 0.4, n = o.chars.length;
+              o.chars.forEach((c, i) => {
+                const a = expoOut((lt - i * st) / di), b = expoIn((lt - (p.t1 - p.t0 - dout - (n - 1 - i) * st * 0.6)) / dout);
+                c.style.transform = "translateY(" + ((1 - a) * 105 - b * 105).toFixed(1) + "%)";
+              });
+            }
+            if (p.k === "hl") {
+              const di = p.din || 0.6, dout = p.dout || 0.4, n = o.lines.length;
+              o.lines.forEach((c, i) => {
+                const a = expoOut((lt - i * 0.11) / di), b = expoIn((lt - (p.t1 - p.t0 - dout - (n - 1 - i) * 0.06)) / dout);
+                c.style.transform = "translateY(" + ((1 - a) * 110 - b * 110).toFixed(1) + "%) skewX(" + ((1 - a) * -12).toFixed(1) + "deg)";
+              });
+            }
+            if (p.k === "br") {
+              o.chars.forEach((c, i) => { const a = backOut((lt - i * 0.045) / 0.45); c.style.transform = "scale(" + a.toFixed(3) + ") rotate(" + ((1 - a) * -25).toFixed(1) + "deg)"; });
+            }
+            if (p.k === "lk") o.inner.style.transform = "translateY(" + (-((lt * (p.speed || 80)) % (p.rowh * 2))).toFixed(1) + "px)";
+            if (p.k === "sc") o.inner.style.transform = "translateY(" + (-((lt * (p.speed || 80)) % (p.rowh * 2))).toFixed(1) + "px)";
+            if (p.k === "sun") o.rays.style.transform = "rotate(" + (lt * (p.spin || 8)).toFixed(2) + "deg) scale(" + (1 + 0.03 * bk).toFixed(4) + ")";
+            if (p.k === "mos") o.inner.style.transform = "translate(" + (-(lt * (p.mx || 30))).toFixed(1) + "px," + (-(lt * (p.my || 12))).toFixed(1) + "px)";
+            el.style.opacity = op.toFixed(3);
+            el.style.transform = "translate(" + x.toFixed(1) + "px," + y.toFixed(1) + "px) translate(-50%,-50%) rotate(" + r.toFixed(2) + "deg) scale(" + s.toFixed(4) + ")";
+            if (o.blur) {
+              if (bl < 0.4) el.style.filter = "none";
+              else { o.blur.g.setAttribute("stdDeviation", bd === "v" ? "0 " + bl.toFixed(1) : bl.toFixed(1) + " 0"); el.style.filter = "url(#" + o.blur.id + ")"; }
+            }
+          }
+        }
+        window.__renderWorld = renderAt;
+        window.addEventListener("hf-seek", (e) => renderAt(e.detail.time));
+        renderAt(window.__hfThreeTime || 0);
+      })();
+    </script>
+  </body>
+</html>

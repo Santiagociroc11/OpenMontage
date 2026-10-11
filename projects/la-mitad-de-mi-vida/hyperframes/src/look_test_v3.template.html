@@ -1,0 +1,252 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=1920, height=1080" />
+    <title>La mitad de mi vida — look test v2</title>
+    <script src="vendor/gsap.min.js"></script>
+    <script type="importmap">
+      { "imports": { "three": "./vendor/three.module.min.js" } }
+    </script>
+    <style>
+      @font-face { font-family: "Brush"; src: url("fonts/BRUSHSCI.TTF") format("truetype"); }
+      @font-face { font-family: "Impact2"; src: url("fonts/impact.ttf") format("truetype"); }
+      body { margin: 0; background: #000; }
+      #root { position: relative; width: 1920px; height: 1080px; overflow: hidden; }
+      #bg { position: absolute; inset: 0; background: #000; }
+      #fx-layer { position: absolute; inset: 0; width: 1920px; height: 1080px; display: block; }
+      .layer { position: absolute; inset: 0; }
+
+      /* Lyric mosaic: rows of outlined text scrolling in alternate directions */
+      #mosaic { position: absolute; left: -200px; top: -60px; width: 2320px; height: 1200px; transform: rotate(-8deg); }
+      .mrow { position: absolute; left: 0; width: 6000px; height: 120px; display: block; white-space: nowrap;
+        font-family: "Impact2"; font-size: 112px; line-height: 120px; letter-spacing: 0.02em;
+        color: rgba(255,255,255,0.04); -webkit-text-stroke: 2px rgba(255,255,255,0.55); }
+      .mrow.fill { color: rgba(255,255,255,0.10); -webkit-text-stroke: 0; }
+      #mosaic-a, #mosaic-b { position: absolute; inset: 0; }
+      .neon-star { position: absolute; width: 150px; height: 150px; display: block; }
+
+      /* Heart halves (sticker style) */
+      .heart-half { position: absolute; left: 760px; top: 470px; width: 400px; height: 360px; display: block; }
+      #heart-pulse { position: absolute; left: 0; top: 0; width: 1920px; height: 1080px; }
+      /* Orbit: a flattened, tilted wrapper (static) around a spinning dashed circle. */
+      #ring-wrap { position: absolute; left: 610px; top: 300px; width: 700px; height: 700px;
+        transform: rotate(-8deg) scaleY(0.27); opacity: 0; }
+      #ring { position: absolute; left: 0; top: 0; width: 700px; height: 700px; display: block; }
+
+      /* Kinetic condensed lines */
+      .kline { position: absolute; left: 0; width: 1920px; display: flex; justify-content: center;
+        font-family: "Impact2"; font-size: 132px; line-height: 1; color: #fff;
+        text-transform: uppercase; letter-spacing: 0.01em; }
+      .kline .skew { display: flex; gap: 0.22em; transform: skewX(-9deg); }
+      .kline .w { display: inline-block; opacity: 0;
+        text-shadow: 0 0 22px rgba(120, 160, 255, 0.85), 0 6px 0 rgba(20, 0, 60, 0.6); }
+      #l1 { top: 150px; }
+      #l2a { top: 120px; }
+      #l2b { top: 265px; }
+      #l4 { top: 170px; }
+      #l4 .w { text-shadow: 0 0 26px rgba(255, 60, 120, 0.9), 0 6px 0 rgba(80, 0, 20, 0.6); }
+
+      /* Hero script */
+      #hero { position: absolute; left: 0; top: 165px; width: 1920px; height: 300px; display: flex;
+        align-items: center; justify-content: center; }
+      #hero-t { display: block; font-family: "Brush"; font-size: 250px; line-height: 1; color: #fff4d6;
+        opacity: 0; white-space: nowrap;
+        text-shadow: 0 0 18px rgba(255, 220, 140, 0.95), 0 0 60px rgba(255, 120, 60, 0.75), 0 8px 0 rgba(90, 0, 40, 0.55); }
+
+      #tag { position: absolute; right: 60px; top: 48px; font-family: "Impact2";
+        font-size: 40px; letter-spacing: 0.08em; color: rgba(255, 255, 255, 0.85); display: block; }
+    </style>
+  </head>
+  <body>
+    <div id="root" data-composition-id="main" data-width="1920" data-height="1080" data-duration="__DURATION__">
+      <div id="bg"></div>
+      <section id="fx" class="clip layer" data-start="0" data-duration="__DURATION__" data-track-index="1">
+        <canvas id="fx-layer" width="1920" height="1080"></canvas>
+      </section>
+
+      <section id="type-bg" class="clip layer" data-start="0" data-duration="__DURATION__" data-track-index="4">
+        <div id="mosaic"><div id="mosaic-a"><span data-layout-ignore class="mrow" style="top:0px">ES QUE YA YO PUEDO SENTIR · ES QUE YA YO PUEDO SENTIR · ES QUE YA YO PUEDO SENTIR · ES QUE YA YO PUEDO SENTIR · ES QUE YA YO PUEDO SENTIR · ES QUE YA YO PUEDO SENTIR · </span><span data-layout-ignore class="mrow fill" style="top:130px">ES QUE YA YO PUEDO SENTIR · ES QUE YA YO PUEDO SENTIR · ES QUE YA YO PUEDO SENTIR · ES QUE YA YO PUEDO SENTIR · ES QUE YA YO PUEDO SENTIR · ES QUE YA YO PUEDO SENTIR · </span><span data-layout-ignore class="mrow" style="top:260px">ES QUE YA YO PUEDO SENTIR · ES QUE YA YO PUEDO SENTIR · ES QUE YA YO PUEDO SENTIR · ES QUE YA YO PUEDO SENTIR · ES QUE YA YO PUEDO SENTIR · ES QUE YA YO PUEDO SENTIR · </span><span data-layout-ignore class="mrow fill" style="top:390px">ES QUE YA YO PUEDO SENTIR · ES QUE YA YO PUEDO SENTIR · ES QUE YA YO PUEDO SENTIR · ES QUE YA YO PUEDO SENTIR · ES QUE YA YO PUEDO SENTIR · ES QUE YA YO PUEDO SENTIR · </span><span data-layout-ignore class="mrow" style="top:520px">ES QUE YA YO PUEDO SENTIR · ES QUE YA YO PUEDO SENTIR · ES QUE YA YO PUEDO SENTIR · ES QUE YA YO PUEDO SENTIR · ES QUE YA YO PUEDO SENTIR · ES QUE YA YO PUEDO SENTIR · </span><span data-layout-ignore class="mrow fill" style="top:650px">ES QUE YA YO PUEDO SENTIR · ES QUE YA YO PUEDO SENTIR · ES QUE YA YO PUEDO SENTIR · ES QUE YA YO PUEDO SENTIR · ES QUE YA YO PUEDO SENTIR · ES QUE YA YO PUEDO SENTIR · </span><span data-layout-ignore class="mrow" style="top:780px">ES QUE YA YO PUEDO SENTIR · ES QUE YA YO PUEDO SENTIR · ES QUE YA YO PUEDO SENTIR · ES QUE YA YO PUEDO SENTIR · ES QUE YA YO PUEDO SENTIR · ES QUE YA YO PUEDO SENTIR · </span><span data-layout-ignore class="mrow fill" style="top:910px">ES QUE YA YO PUEDO SENTIR · ES QUE YA YO PUEDO SENTIR · ES QUE YA YO PUEDO SENTIR · ES QUE YA YO PUEDO SENTIR · ES QUE YA YO PUEDO SENTIR · ES QUE YA YO PUEDO SENTIR · </span><span data-layout-ignore class="mrow" style="top:1040px">ES QUE YA YO PUEDO SENTIR · ES QUE YA YO PUEDO SENTIR · ES QUE YA YO PUEDO SENTIR · ES QUE YA YO PUEDO SENTIR · ES QUE YA YO PUEDO SENTIR · ES QUE YA YO PUEDO SENTIR · </span><span data-layout-ignore class="mrow fill" style="top:1170px">ES QUE YA YO PUEDO SENTIR · ES QUE YA YO PUEDO SENTIR · ES QUE YA YO PUEDO SENTIR · ES QUE YA YO PUEDO SENTIR · ES QUE YA YO PUEDO SENTIR · ES QUE YA YO PUEDO SENTIR · </span></div><div id="mosaic-b"><span data-layout-ignore class="mrow" style="top:0px">LA MITAD DE MI VIDA · LA MITAD DE MI VIDA · LA MITAD DE MI VIDA · LA MITAD DE MI VIDA · LA MITAD DE MI VIDA · LA MITAD DE MI VIDA · LA MITAD DE MI VIDA · LA MITAD DE MI VIDA · </span><span data-layout-ignore class="mrow fill" style="top:130px">LA MITAD DE MI VIDA · LA MITAD DE MI VIDA · LA MITAD DE MI VIDA · LA MITAD DE MI VIDA · LA MITAD DE MI VIDA · LA MITAD DE MI VIDA · LA MITAD DE MI VIDA · LA MITAD DE MI VIDA · </span><span data-layout-ignore class="mrow" style="top:260px">LA MITAD DE MI VIDA · LA MITAD DE MI VIDA · LA MITAD DE MI VIDA · LA MITAD DE MI VIDA · LA MITAD DE MI VIDA · LA MITAD DE MI VIDA · LA MITAD DE MI VIDA · LA MITAD DE MI VIDA · </span><span data-layout-ignore class="mrow fill" style="top:390px">LA MITAD DE MI VIDA · LA MITAD DE MI VIDA · LA MITAD DE MI VIDA · LA MITAD DE MI VIDA · LA MITAD DE MI VIDA · LA MITAD DE MI VIDA · LA MITAD DE MI VIDA · LA MITAD DE MI VIDA · </span><span data-layout-ignore class="mrow" style="top:520px">LA MITAD DE MI VIDA · LA MITAD DE MI VIDA · LA MITAD DE MI VIDA · LA MITAD DE MI VIDA · LA MITAD DE MI VIDA · LA MITAD DE MI VIDA · LA MITAD DE MI VIDA · LA MITAD DE MI VIDA · </span><span data-layout-ignore class="mrow fill" style="top:650px">LA MITAD DE MI VIDA · LA MITAD DE MI VIDA · LA MITAD DE MI VIDA · LA MITAD DE MI VIDA · LA MITAD DE MI VIDA · LA MITAD DE MI VIDA · LA MITAD DE MI VIDA · LA MITAD DE MI VIDA · </span><span data-layout-ignore class="mrow" style="top:780px">LA MITAD DE MI VIDA · LA MITAD DE MI VIDA · LA MITAD DE MI VIDA · LA MITAD DE MI VIDA · LA MITAD DE MI VIDA · LA MITAD DE MI VIDA · LA MITAD DE MI VIDA · LA MITAD DE MI VIDA · </span><span data-layout-ignore class="mrow fill" style="top:910px">LA MITAD DE MI VIDA · LA MITAD DE MI VIDA · LA MITAD DE MI VIDA · LA MITAD DE MI VIDA · LA MITAD DE MI VIDA · LA MITAD DE MI VIDA · LA MITAD DE MI VIDA · LA MITAD DE MI VIDA · </span><span data-layout-ignore class="mrow" style="top:1040px">LA MITAD DE MI VIDA · LA MITAD DE MI VIDA · LA MITAD DE MI VIDA · LA MITAD DE MI VIDA · LA MITAD DE MI VIDA · LA MITAD DE MI VIDA · LA MITAD DE MI VIDA · LA MITAD DE MI VIDA · </span><span data-layout-ignore class="mrow fill" style="top:1170px">LA MITAD DE MI VIDA · LA MITAD DE MI VIDA · LA MITAD DE MI VIDA · LA MITAD DE MI VIDA · LA MITAD DE MI VIDA · LA MITAD DE MI VIDA · LA MITAD DE MI VIDA · LA MITAD DE MI VIDA · </span></div></div>
+        <div id="stars"><svg class="neon-star" style="left:120px;top:620px" viewBox="-60 -60 120 120"><path d="M0,-50 L14,-16 L50,-15 L22,8 L31,44 L0,23 L-31,44 L-22,8 L-50,-15 L-14,-16 Z" fill="none" stroke="#ff4fd8" stroke-width="7" stroke-linejoin="round"/><path d="M0,-50 L14,-16 L50,-15 L22,8 L31,44 L0,23 L-31,44 L-22,8 L-50,-15 L-14,-16 Z" fill="none" stroke="#ffd6f6" stroke-width="2.5" stroke-linejoin="round"/></svg><svg class="neon-star" style="left:330px;top:760px" viewBox="-60 -60 120 120"><path d="M0,-50 L14,-16 L50,-15 L22,8 L31,44 L0,23 L-31,44 L-22,8 L-50,-15 L-14,-16 Z" fill="none" stroke="#ff4fd8" stroke-width="7" stroke-linejoin="round"/><path d="M0,-50 L14,-16 L50,-15 L22,8 L31,44 L0,23 L-31,44 L-22,8 L-50,-15 L-14,-16 Z" fill="none" stroke="#ffd6f6" stroke-width="2.5" stroke-linejoin="round"/></svg><svg class="neon-star" style="left:1440px;top:760px" viewBox="-60 -60 120 120"><path d="M0,-50 L14,-16 L50,-15 L22,8 L31,44 L0,23 L-31,44 L-22,8 L-50,-15 L-14,-16 Z" fill="none" stroke="#ff4fd8" stroke-width="7" stroke-linejoin="round"/><path d="M0,-50 L14,-16 L50,-15 L22,8 L31,44 L0,23 L-31,44 L-22,8 L-50,-15 L-14,-16 Z" fill="none" stroke="#ffd6f6" stroke-width="2.5" stroke-linejoin="round"/></svg><svg class="neon-star" style="left:1650px;top:620px" viewBox="-60 -60 120 120"><path d="M0,-50 L14,-16 L50,-15 L22,8 L31,44 L0,23 L-31,44 L-22,8 L-50,-15 L-14,-16 Z" fill="none" stroke="#ff4fd8" stroke-width="7" stroke-linejoin="round"/><path d="M0,-50 L14,-16 L50,-15 L22,8 L31,44 L0,23 L-31,44 L-22,8 L-50,-15 L-14,-16 Z" fill="none" stroke="#ffd6f6" stroke-width="2.5" stroke-linejoin="round"/></svg></div>
+      </section>
+
+      <section id="heart" class="clip layer" data-start="0" data-duration="__DURATION__" data-track-index="2">
+        <div id="heart-pulse">
+          <div id="ring-wrap"><svg id="ring" viewBox="0 0 700 700">
+            <circle cx="350" cy="350" r="330" fill="none" stroke="#fff3c4" stroke-width="16" stroke-dasharray="40 46" />
+          </svg></div>
+          <svg id="half-l" class="heart-half" viewBox="-20 -20 240 220">
+            <defs>
+              <linearGradient id="hg" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0" stop-color="#ff5fa2" /><stop offset="1" stop-color="#e0103f" />
+              </linearGradient>
+              <clipPath id="cl"><rect x="-20" y="-20" width="120" height="220" /></clipPath>
+            </defs>
+            <g clip-path="url(#cl)">
+              <path d="M100 170 C 40 120, 0 90, 0 50 C 0 20, 25 0, 52 0 C 75 0, 92 14, 100 30 C 108 14, 125 0, 148 0 C 175 0, 200 20, 200 50 C 200 90, 160 120, 100 170 Z"
+                fill="url(#hg)" stroke="#ffffff" stroke-width="12" stroke-linejoin="round" />
+              <path d="M38 34 C 30 40, 26 50, 28 60" fill="none" stroke="#ffd1e4" stroke-width="9" stroke-linecap="round" />
+            </g>
+          </svg>
+          <svg id="half-r" class="heart-half" viewBox="-20 -20 240 220">
+            <defs><clipPath id="cr"><rect x="100" y="-20" width="120" height="220" /></clipPath></defs>
+            <g clip-path="url(#cr)">
+              <path d="M100 170 C 40 120, 0 90, 0 50 C 0 20, 25 0, 52 0 C 75 0, 92 14, 100 30 C 108 14, 125 0, 148 0 C 175 0, 200 20, 200 50 C 200 90, 160 120, 100 170 Z"
+                fill="url(#hg)" stroke="#ffffff" stroke-width="12" stroke-linejoin="round" />
+            </g>
+          </svg>
+        </div>
+      </section>
+
+      <section id="lyrics" class="clip layer" data-start="0" data-duration="__DURATION__" data-track-index="3">
+        <div id="l1" class="kline"><div class="skew"><span class="w">Yo</span><span class="w">no</span><span class="w">puedo</span><span class="w">rogarte</span></div></div>
+        <div id="l2a" class="kline"><div class="skew"><span class="w">Es</span><span class="w">que</span><span class="w">ya</span><span class="w">yo</span><span class="w">puedo</span></div></div>
+        <div id="l2b" class="kline"><div class="skew"><span class="w">sentir</span><span class="w">que</span><span class="w">tú</span><span class="w">eres</span></div></div>
+        <div id="hero"><span id="hero-t">la mitad de mi vida</span></div>
+        <div id="l4" class="kline"><div class="skew"><span class="w">El</span><span class="w">amor</span><span class="w">que</span><span class="w">vendría</span></div></div>
+        <span id="tag">TIKO DURÁN</span>
+      </section>
+    </div>
+
+    <script>
+      window.LT = { songStart: __SONG_START__, energy: __ENERGY__, bpm: __BPM__, join: 49.6 };
+      const S0 = window.LT.songStart, at = (t) => t - S0, beat = 60 / window.LT.bpm;
+      window.__timelines = window.__timelines || {};
+      const tl = gsap.timeline({ paused: true });
+
+      function kinetic(sel, tIn, tOut) {
+        tl.fromTo(sel + " .w", { opacity: 0, scale: 1.7, y: -26 },
+          { opacity: 1, scale: 1, y: 0, duration: 0.32, ease: "back.out(2)", stagger: beat / 4 }, at(tIn));
+        tl.to(sel + " .w", { opacity: 0, y: 30, duration: 0.3, ease: "power2.in", stagger: 0.04 }, at(tOut));
+      }
+      kinetic("#l1", 41.8, 44.1);
+      kinetic("#l2a", 44.5, 49.1);
+      kinetic("#l2b", 46.5, 49.1);
+      kinetic("#l4", 53.1, 55.1);
+
+      // Heart halves: drift apart, then accelerate together into the join.
+      const J = window.LT.join;
+      tl.fromTo("#half-l", { x: -330, rotation: -10 }, { x: -230, rotation: -6, duration: at(44.5), ease: "sine.inOut" }, 0);
+      tl.fromTo("#half-r", { x: 330, rotation: 10 }, { x: 230, rotation: 6, duration: at(44.5), ease: "sine.inOut" }, 0);
+      tl.to("#half-l", { x: 0, rotation: 0, duration: J - 44.5, ease: "power3.in" }, at(44.5));
+      tl.to("#half-r", { x: 0, rotation: 0, duration: J - 44.5, ease: "power3.in" }, at(44.5));
+      // Join: pop, ring appears and orbits.
+      tl.fromTo("#heart-pulse", { scale: 1 }, { scale: 1.14, duration: 0.18, ease: "power2.out", yoyo: true, repeat: 1,
+        transformOrigin: "960px 650px" }, at(J));
+      tl.to("#ring-wrap", { opacity: 1, duration: 0.4, ease: "sine.out" }, at(J));
+      tl.fromTo("#ring", { rotation: 0 }, { rotation: 360, duration: beat * 4, ease: "none", repeat: 2, transformOrigin: "50% 50%" }, at(J));
+      // Hero script.
+      tl.fromTo("#hero-t", { opacity: 0, scale: 0.86, y: 20 }, { opacity: 1, scale: 1, y: 0, duration: 0.7, ease: "back.out(1.6)" }, at(J - 0.1));
+      tl.to("#hero-t", { opacity: 0, scale: 1.06, duration: 0.45, ease: "power2.in" }, at(52.7));
+      // Breathing on the tempo: 2-beat cosine pulse (no hard hits).
+      const br = beat;
+      tl.fromTo(".heart-half", { scale: 1 }, { scale: 1.06, duration: br / 2, ease: "sine.inOut", yoyo: true,
+        repeat: Math.max(0, Math.floor(__DURATION__ / (br / 2)) - 1), transformOrigin: "50% 60%" }, 0);
+      // Mosaic: each row scrolls one phrase-width per 2 bars, alternating direction.
+      const D = __DURATION__, bar = beat * 4;
+      document.querySelectorAll("#mosaic-a .mrow, #mosaic-b .mrow").forEach((el, i) => {
+        const dir = i % 2 ? 1 : -1, dist = 1400;
+        tl.fromTo(el, { x: dir > 0 ? -dist : 0 }, { x: dir > 0 ? 0 : -dist, duration: D, ease: "none" }, 0);
+      });
+      tl.fromTo("#mosaic-a", { opacity: 0 }, { opacity: 0.5, duration: 1.2, ease: "sine.out" }, at(44.5));
+      tl.to("#mosaic-a", { opacity: 0, duration: 0.3 }, at(J - 0.15));
+      tl.fromTo("#mosaic-b", { opacity: 0 }, { opacity: 0.55, duration: 0.35, ease: "sine.out" }, at(J));
+      tl.fromTo("#mosaic", { scale: 1 }, { scale: 1.12, duration: D, ease: "none", transformOrigin: "50% 50%" }, 0);
+      // Neon stars: pop in at the join, spin one turn per bar, breathe each beat.
+      tl.fromTo(".neon-star", { opacity: 0, scale: 0.2 }, { opacity: 1, scale: 1, duration: 0.45, ease: "back.out(2.2)", stagger: beat / 2 }, at(J + 0.1));
+      tl.to(".neon-star", { rotation: 360 * Math.floor((D - at(J)) / bar), duration: Math.floor((D - at(J)) / bar) * bar, ease: "none", transformOrigin: "50% 50%" }, at(J));
+      tl.fromTo(".neon-star", { scale: 1 }, { scale: 1.12, duration: beat / 2, ease: "sine.inOut", yoyo: true,
+        repeat: Math.max(0, Math.floor((D - at(J) - 0.6) / (beat / 2)) - 1) }, at(J + 0.6));
+      // Whole frame drifts like a slow handheld camera (no shake, continuous).
+      tl.fromTo("#heart-pulse", { rotation: -1.5 }, { rotation: 1.5, duration: bar, ease: "sine.inOut", yoyo: true,
+        repeat: Math.max(0, Math.floor(D / bar) - 1), transformOrigin: "960px 650px" }, 0);
+      window.__timelines["main"] = tl;
+    </script>
+
+    <script type="module">
+      import * as THREE from "three";
+      const canvas = document.getElementById("fx-layer");
+      const renderer = new THREE.WebGLRenderer({ canvas, antialias: false, alpha: false });
+      renderer.setSize(1920, 1080, false);
+      renderer.setPixelRatio(1);
+      const scene = new THREE.Scene();
+      const camera = new THREE.OrthographicCamera(-1, 1, 1, -1, 0, 1);
+      const uniforms = {
+        uRes: { value: new THREE.Vector2(1920, 1080) }, uTime: { value: 0 }, uWarm: { value: 0 },
+        uBurst: { value: -1 }, uBeat: { value: 0.44 }, uLo: { value: 0 }, uHi: { value: 0 }, uFrame: { value: 0 },
+      };
+      const frag = `
+        precision highp float;
+        uniform vec2 uRes; uniform float uTime, uWarm, uBurst, uBeat, uLo, uHi, uFrame;
+        varying vec2 vUv;
+        float hash(vec2 p){ p = fract(p*vec2(123.34, 456.21)); p += dot(p, p+45.32); return fract(p.x*p.y); }
+        vec2 hash2(vec2 p){ float h = hash(p); return vec2(h, hash(p + h*17.0)); }
+        float starLayer(vec2 uv){
+          vec2 id = floor(uv), gv = fract(uv) - 0.5;
+          vec2 o = hash2(id) - 0.5;
+          float d = length(gv - o*0.8);
+          float b = hash(id + 3.7);
+          return smoothstep(0.06, 0.0, d) * step(0.55, b) * (0.6 + 0.4*b);
+        }
+        void main(){
+          vec2 px = vUv*uRes;
+          vec2 c = vec2(960.0, 1080.0 - 650.0);            // heart centre (gl coords)
+          vec2 q = (px - c)/uRes.y;
+          float r = length(q), ang = atan(q.y, q.x);
+          // Sky: cool night -> Caribbean sunset after the join.
+          float h = vUv.y;
+          vec3 cool = mix(vec3(0.10,0.18,0.95), vec3(0.06,0.02,0.22), smoothstep(0.0, 1.0, h));
+          vec3 warm = mix(vec3(1.00,0.45,0.10), mix(vec3(0.95,0.08,0.38), vec3(0.24,0.00,0.20), smoothstep(0.45,1.0,h)), smoothstep(0.0,0.55,h));
+          vec3 col = mix(cool, warm, uWarm);
+          // Rotating light rays from the heart.
+          float rays = pow(0.5 + 0.5*cos(ang*12.0 + uTime*1.6), 10.0) * exp(-r*1.2);
+          col += mix(vec3(0.45,0.6,1.0), vec3(1.0,0.75,0.45), uWarm) * rays * (0.22 + 0.25*uLo);
+          // Warp starfield streaming outward at the song's pace.
+          float speed = 0.5 / (uBeat*2.0);                  // one layer cycle every 2 beats
+          float stars = 0.0;
+          for (int i = 0; i < 4; i++) {
+            float fi = float(i)/4.0;
+            float depth = fract(fi + uTime*speed);
+            float scale = mix(26.0, 1.2, depth);
+            float fade = smoothstep(0.0, 0.4, depth) * smoothstep(1.0, 0.85, depth);
+            stars += starLayer(q*scale + fi*91.7) * fade;
+          }
+          col += vec3(1.0, 0.95, 0.88) * stars * (0.9 + 0.8*uHi);
+          // Breathing glow on a 2-beat cosine.
+          float breath = 0.5 + 0.5*cos(6.2831853*uTime/uBeat);
+          col += mix(vec3(0.35,0.45,1.0), vec3(1.0,0.55,0.35), uWarm) * exp(-r*4.0) * (0.28 + 0.12*breath);
+          // Sparkle burst ring at the join.
+          if (uBurst >= 0.0) {
+            float R = uBurst*1.15;
+            float ring = exp(-pow((r - R)/0.035, 2.0)) * exp(-uBurst*1.4);
+            float sp = step(0.82, hash(floor(vec2(ang*60.0, r*80.0))));
+            col += vec3(1.0, 0.9, 0.6) * ring * (0.6 + 2.2*sp);
+            col += vec3(1.0, 0.85, 0.6) * exp(-r*3.0) * exp(-uBurst*3.0) * 0.6;
+          }
+          vec2 v = vUv - 0.5; col *= 1.0 - dot(v, v)*0.6;
+          col += (hash(px + uFrame) - 0.5)*0.02;
+          gl_FragColor = vec4(clamp(col, 0.0, 1.0), 1.0);
+        }`;
+      const mat = new THREE.ShaderMaterial({ uniforms,
+        vertexShader: "varying vec2 vUv; void main(){ vUv = uv; gl_Position = vec4(position.xy, 0.0, 1.0); }",
+        fragmentShader: frag });
+      scene.add(new THREE.Mesh(new THREE.PlaneGeometry(2, 2), mat));
+      const LT = window.LT;
+      const sm = (a, b, x) => { const t = Math.min(1, Math.max(0, (x - a)/(b - a))); return t*t*(3 - 2*t); };
+      function renderAt(time) {
+        const song = LT.songStart + time;
+        const f = Math.min(LT.energy.frames - 1, Math.max(0, Math.round(time*LT.energy.fps)));
+        uniforms.uTime.value = song;
+        uniforms.uBeat.value = 60/LT.bpm;
+        uniforms.uWarm.value = sm(LT.join - 0.2, LT.join + 0.9, song);
+        uniforms.uBurst.value = song >= LT.join ? song - LT.join : -1;
+        uniforms.uLo.value = LT.energy.low[f];
+        uniforms.uHi.value = LT.energy.high[f];
+        uniforms.uFrame.value = f;
+        renderer.render(scene, camera);
+      }
+      window.addEventListener("hf-seek", (e) => renderAt(e.detail.time));
+      renderAt(window.__hfThreeTime || 0);
+    </script>
+  </body>
+</html>

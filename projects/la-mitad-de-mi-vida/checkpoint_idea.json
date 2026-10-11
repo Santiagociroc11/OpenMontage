@@ -1,0 +1,202 @@
+{
+  "version": "1.0",
+  "project_id": "la-mitad-de-mi-vida",
+  "pipeline_type": "concert-visuals",
+  "stage": "idea",
+  "status": "completed",
+  "timestamp": "2026-10-11T01:22:57.217499+00:00",
+  "checkpoint_policy": "guided",
+  "human_approval_required": true,
+  "human_approved": true,
+  "artifacts": {
+    "brief": {
+      "version": "1.0",
+      "title": "La Mitad De Mi Vida \u2014 Tiko Dur\u00e1n (visual de concierto)",
+      "hook": "Una luna partida por la mitad sobre un mar nocturno; su reflejo en el agua la completa cada vez que suena 't\u00fa eres la mitad de mi vida'.",
+      "key_points": [
+        "Mar de olvido: mar nocturno, oscuro, casi negro \u2014 la banda y las luces del escenario mandan",
+        "La luna partida es el motivo: incompleta en las estrofas, completa por su reflejo en cada estribillo",
+        "El tramo instrumental (1:17\u20133:36) se vuelve noche viva: brillos en el agua y estrellas que respiran con la energ\u00eda",
+        "'Te regalo una estrella': una estrella fugaz cruza el cielo (fundido lento, no golpe)",
+        "Pico final y cierre: amanece sobre el mar ('el sol buscar\u00e1 tu huella') y la imagen se sostiene hasta que la banda termine"
+      ],
+      "core_message": "La otra mitad que falta, buscada en el mar y en el cielo.",
+      "tone": "rom\u00e1ntico, nost\u00e1lgico, c\u00e1lido; nocturno con un amanecer de esperanza al final",
+      "style": "Mar de olvido + luna partida \u2014 paisaje nocturno, oscuro, iluminaci\u00f3n de luna y luego amanecer",
+      "target_audience": "P\u00fablico de concierto en vivo",
+      "target_platform": "generic",
+      "target_duration_seconds": 392.4,
+      "metadata": {
+        "production_mode": "free_run",
+        "free_run_rules": [
+          "Cambios de secci\u00f3n como fundidos largos (>= 2 compases) en los tiempos de la grabaci\u00f3n; ning\u00fan corte que deba caer en un golpe",
+          "Sin destellos ni letra que dependan de un beat o palabra exacta",
+          "Movimiento que respira al tempo aproximado (~145 BPM) sin pulso marcado",
+          "Cola de 60 s con el amanecer en loop limpio para no terminar antes que la banda"
+        ],
+        "tracks": [
+          {
+            "title": "La Mitad De Mi Vida",
+            "artist": "Tiko Dur\u00e1n",
+            "audio_path": "C:\\Users\\sanci\\Desktop\\La Mitad De Mi Vida - TIKO DURAN.wav",
+            "song_map_path": "projects/la-mitad-de-mi-vida/song_map/la-mitad-de-mi-vida.json",
+            "setlist_position": 1,
+            "recording": "en vivo, sin click: el tempo sube de ~137 a ~151 BPM; termina con 'un aplauso para ustedes'"
+          }
+        ],
+        "song_arc": {
+          "tempo_bpm_mean": 144.75,
+          "tempo_note": "tempo changes between sections (see sections[].tempo_bpm) - cut on the listed beat times",
+          "bars": 193,
+          "biggest_entry_seconds": 221.054,
+          "loudest_section": "s14",
+          "instrumental_seconds": [
+            77.5,
+            216.4
+          ],
+          "outro_seconds": 318.973
+        },
+        "canvas": {
+          "width": 1920,
+          "height": 1080,
+          "fps": 30,
+          "provisional": true,
+          "screens": [
+            {
+              "name": "main",
+              "x": 0,
+              "y": 0,
+              "w": 1920,
+              "h": 1080
+            }
+          ],
+          "safe_zones": "contenido clave fuera del 15% inferior (escenario/monitores); centro inferior reservado a la silueta de la banda"
+        },
+        "delivery": {
+          "playback_system": "laptop (VLC u otro reproductor), sin operador",
+          "codec": "h264 mp4 alta tasa (principal) + prores_422 (respaldo)",
+          "audio_in_master": false,
+          "review_copy": "H.264 con la grabaci\u00f3n y timecode, solo para aprobaci\u00f3n"
+        },
+        "sync_source": "manual_go",
+        "sync_note": "Alguien pulsa play al empezar la canci\u00f3n; no hay sincron\u00eda fina",
+        "render_runtime": "hyperframes",
+        "artist_assets": [],
+        "lighting_palette": null,
+        "lyric_moments": [
+          {
+            "t": 49.6,
+            "text": "la mitad de mi vida"
+          },
+          {
+            "t": 222.4,
+            "text": "te regalo una estrella"
+          },
+          {
+            "t": 227.2,
+            "text": "y cruzo el mar"
+          },
+          {
+            "t": 228.1,
+            "text": "el sol buscar\u00e1 tu huella"
+          },
+          {
+            "t": 236.4,
+            "text": "la mitad de mi vida"
+          }
+        ],
+        "notes_for_script": "Transcripci\u00f3n Whisper small en projects/la-mitad-de-mi-vida/lyrics/ (aproximada; la letra no se escribir\u00e1 en pantalla). Secciones repetidas: s04\u2248s12\u2248s13 (>0.9) y s07\u2248s14."
+      }
+    },
+    "decision_log": {
+      "version": "1.0",
+      "project_id": "la-mitad-de-mi-vida",
+      "decisions": [
+        {
+          "decision_id": "d-001",
+          "stage": "idea",
+          "category": "pipeline_selection",
+          "subject": "Modo de producci\u00f3n",
+          "options_considered": [
+            {
+              "option_id": "free_run",
+              "label": "Video continuo sin operador",
+              "score": 0.9,
+              "reason": "Banda en vivo sin click y nadie que opere"
+            },
+            {
+              "option_id": "vj_loops",
+              "label": "Loops por secci\u00f3n con GO",
+              "score": 0.5,
+              "reason": "Necesita operador; el usuario dijo que nadie"
+            },
+            {
+              "option_id": "song_sync",
+              "label": "Video sincronizado frame a frame",
+              "score": 0.1,
+              "reason": "La banda toca en vivo: se desfasar\u00eda"
+            }
+          ],
+          "selected": "free_run",
+          "reason": "Respuesta del usuario: banda en vivo, sin operador"
+        },
+        {
+          "decision_id": "d-002",
+          "stage": "idea",
+          "category": "concept_selection",
+          "subject": "Mundo visual",
+          "options_considered": [
+            {
+              "option_id": "mar",
+              "label": "Mar de olvido + luna partida",
+              "score": 0.9,
+              "reason": "Sale de la letra (mar, estrella, sol, la mitad)"
+            },
+            {
+              "option_id": "mitad",
+              "label": "La otra mitad (gr\u00e1fico)",
+              "score": 0.7,
+              "reason": "Limpio pero fr\u00edo para la canci\u00f3n"
+            },
+            {
+              "option_id": "caribe",
+              "label": "Noche caribe\u00f1a",
+              "score": 0.6,
+              "reason": "Festivo, menos ligado a la letra"
+            }
+          ],
+          "selected": "mar",
+          "reason": "Elegido por el usuario (era la recomendaci\u00f3n)"
+        },
+        {
+          "decision_id": "d-003",
+          "stage": "idea",
+          "category": "render_runtime_selection",
+          "subject": "Runtime de composici\u00f3n",
+          "options_considered": [
+            {
+              "option_id": "hyperframes",
+              "label": "HyperFrames (HTML/GSAP/Three.js)",
+              "score": 0.9,
+              "reason": "Lienzo a medida, shaders y mar/luna procedurales, render determinista por secciones"
+            },
+            {
+              "option_id": "remotion",
+              "label": "Remotion",
+              "score": 0.5,
+              "reason": "Disponible; mejor para montar clips, peor para un paisaje procedural continuo"
+            },
+            {
+              "option_id": "ffmpeg",
+              "label": "ffmpeg",
+              "score": 0.1,
+              "reason": "Solo une/transcodifica"
+            }
+          ],
+          "selected": "hyperframes",
+          "reason": "Los tres disponibles; se recomienda HyperFrames, pendiente de aprobaci\u00f3n del usuario en esta puerta"
+        }
+      ]
+    }
+  }
+}
