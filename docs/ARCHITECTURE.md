@@ -210,6 +210,7 @@ stages:
 | `avatar-spokesperson` | talking_head | Avatar-driven presenter videos |
 | `character-animation` | animation | Local rigged cartoon characters with SVG rigs, pose libraries, GSAP timelines, and HyperFrames rendering |
 | `cinematic` | cinematic | Trailer, teaser, mood-driven edits |
+| `concert-visuals` | generated | Live-show LED/projection visuals synced to the song's beat grid; full-song masters or VJ loop packs in HAP/ProRes |
 | `clip-factory` | custom | Batch short-form clips from long source |
 | `hybrid` | hybrid | Source footage + AI-generated support visuals |
 | `localization-dub` | custom | Subtitle, dub, and translate existing video |

@@ -132,6 +132,11 @@ class PiperTTS(BaseTool):
             input=inputs["text"],
             capture_output=True,
             text=True,
+            # Without an explicit encoding, text=True falls back to the locale
+            # codec (cp1252 on Windows), so any accented character silently
+            # breaks Piper's stdin and yields a 0-byte wav. Non-English voices
+            # are unusable without this.
+            encoding="utf-8",
             timeout=300,
         )
 

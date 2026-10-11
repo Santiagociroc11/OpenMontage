@@ -1,0 +1,277 @@
+name: concert-visuals
+version: "1.0"
+description: >
+  Live-show visuals: the video that plays on the LED wall / projection behind an
+  artist during a concert. The music is the input and the clock — every cut,
+  flash and scene change lands on the song's beat grid, bars and sections,
+  mapped by `song_map`. Three production modes:
+    1. SONG_SYNC — one full-length visual per song, frame-locked to the
+       playback track (bands that play to click/stems, DJ sets with fixed
+       edits, walk-on intros).
+    2. VJ_LOOPS — a pack of seamless, bar-length loops per song or per energy
+       level, for a VJ to trigger live in Resolume / a media server.
+    3. FREE_RUN — one continuous video that a live band without click plays
+       over with nobody operating it: slow evolution, long dissolves, no hit
+       that must land on a specific beat, and a holdable ending.
+  No narration, no subtitles. Output is mastered for the venue's canvas
+  (custom LED resolutions, multi-screen splits) and show codecs (HAP, ProRes),
+  with a photosensitive-safety gate on every render.
+category: generated
+stability: beta
+default_checkpoint_policy: guided
+
+production_modes:
+  - name: song_sync
+    description: "One visual per song, same duration as the track, frame-locked from sample 0"
+    required_tools: [song_map, hyperframes_compose]
+    optional_tools: [video_selector, image_selector]
+    best_for:
+      - Bands playing to click track / backing stems from Ableton or a playback rig
+      - DJ sets with fixed edits, pre-recorded intros, walk-on and countdown pieces
+      - Songs with a choreographed moment (drop, lyric line, logo hit) that must land exactly
+  - name: vj_loops
+    description: "Pack of seamless loops (4/8/16 bars at the song's tempo) grouped by energy, triggered live"
+    required_tools: [song_map, hyperframes_compose]
+    optional_tools: [video_selector, image_selector]
+    best_for:
+      - Live bands without click (tempo drifts — frame-locking is impossible)
+      - Festival sets where the VJ improvises to the room
+      - Reusable show packages across many songs (intro / groove / build / peak / breakdown banks)
+  - name: free_run
+    description: "One unattended video for a live band without click; drift-tolerant arc, no beat-locked hits"
+    required_tools: [song_map, hyperframes_compose]
+    optional_tools: [video_selector, image_selector]
+    best_for:
+      - Live band without click and no VJ or operator — someone presses play at the song start
+      - Small venues with a laptop and VLC / any player
+      - Ambient, place-based worlds whose motion reads as tempo without being locked to it
+
+orchestration:
+  mode: executive-producer
+  skill: pipelines/concert-visuals/executive-producer
+  budget_default_usd: 3.00
+  max_revisions_per_stage: 3
+  max_send_backs: 3
+  max_wall_time_minutes: 30
+
+extensions:
+  custom_scripts: true
+  custom_playbooks: true
+  custom_skills: true
+  custom_tools: false
+
+required_skills:
+  - pipelines/concert-visuals/executive-producer
+  - pipelines/concert-visuals/idea-director
+  - pipelines/concert-visuals/script-director
+  - pipelines/concert-visuals/scene-director
+  - pipelines/concert-visuals/asset-director
+  - pipelines/concert-visuals/edit-director
+  - pipelines/concert-visuals/compose-director
+  - pipelines/concert-visuals/publish-director
+  - pipelines/concert-visuals/continuous-world
+  - pipelines/concert-visuals/reference-research
+  - meta/reviewer
+  - meta/checkpoint-protocol
+  - meta/animation-runtime-selector
+
+compatible_playbooks:
+  recommended: []
+  also_works:
+    - flat-motion-graphics
+  custom_allowed: true
+
+stages:
+  - name: idea
+    skill: pipelines/concert-visuals/idea-director
+    produces:
+      - brief
+      - decision_log
+    required_tools:
+      - song_map
+    optional_tools:
+      - audio_probe
+    tools_available:
+      - song_map
+      - audio_probe
+    checkpoint_required: true
+    human_approval_default: true
+    review_focus:
+      - Production mode (song_sync / vj_loops / free_run) matches how the band plays and who operates the playback
+      - Canvas is the venue's real pixel map, not a default 1920x1080
+      - Delivery codec and frame rate match the playback system named by the user
+      - Visual world is specific to this artist and song, not generic "music visualizer"
+    success_criteria:
+      - Schema-valid brief artifact
+      - brief.metadata records production_mode, canvas, delivery, song_map_path and render_runtime
+
+  - name: script
+    skill: pipelines/concert-visuals/script-director
+    required_artifacts_in:
+      - brief
+    produces:
+      - script
+    required_tools:
+      - song_map
+    optional_tools:
+      - transcriber
+      - audio_energy
+    tools_available:
+      - song_map
+      - transcriber
+      - audio_energy
+    checkpoint_required: true
+    human_approval_default: true
+    review_focus:
+      - Every script section is a song section with times taken from song_map, snapped to downbeats
+      - The visual arc follows the song's energy (drops get the biggest change, breakdowns get space)
+      - Repeated sections (chorus 2 ~ chorus 1) reuse and escalate a motif instead of inventing a new one
+      - Lyric moments, if any, are timed from the transcript, not guessed
+    success_criteria:
+      - Schema-valid script artifact
+      - Section boundaries match song_map downbeats within one frame
+
+  - name: scene_plan
+    skill: pipelines/concert-visuals/scene-director
+    required_artifacts_in:
+      - script
+    optional_artifacts_in:
+      - brief
+    produces:
+      - scene_plan
+    optional_tools:
+      - frame_sampler
+    tools_available:
+      - frame_sampler
+      - hyperframes_compose
+    checkpoint_required: true
+    human_approval_default: true
+    review_focus:
+      - Each scene names its beat-reactive behaviour (what moves on the kick, on bar 1, on the drop)
+      - Stage safe zones respected (artist silhouette, floor and truss cut-offs)
+      - Brightness matches the genre decided in the brief (dark for electronic/cinematic, saturated colour for Caribbean genres); full-white and flash moments are rare and deliberate
+      - VJ loops are planned as bar multiples with matching first/last frames
+    success_criteria:
+      - Schema-valid scene_plan artifact
+      - Every script section has at least one scene
+    sub_stages:
+      - name: look_test
+        description: "8-bar render of the peak section at full canvas, reviewed before any batch generation"
+        condition: "always"
+        human_approval_default: true
+        tools_available: [hyperframes_compose, song_map]
+        review_focus:
+          - "Motion visibly locks to the beat when played with the track"
+          - "Palette and darkness read correctly on an LED wall (not washed out)"
+          - "No flash sequence exceeds the photosensitive limit"
+
+  - name: assets
+    skill: pipelines/concert-visuals/asset-director
+    required_artifacts_in:
+      - scene_plan
+    optional_artifacts_in:
+      - script
+      - brief
+    produces:
+      - asset_manifest
+    optional_tools:
+      - image_selector
+      - video_selector
+      - bg_remove
+      - upscale
+      - color_grade
+      - threejs_world
+      - threejs_asset_catalog
+    tools_available:
+      - image_selector
+      - video_selector
+      - bg_remove
+      - upscale
+      - color_grade
+      - threejs_world
+      - threejs_asset_catalog
+    checkpoint_required: true
+    human_approval_default: true
+    review_focus:
+      - Generated textures and clips hold up at canvas resolution (upscaled where needed)
+      - Artist logos and lyric text are real typography, never written by the image generator
+      - Clip durations cover their scenes, or are planned to loop
+    success_criteria:
+      - Schema-valid asset_manifest artifact
+      - All referenced asset files exist on disk
+
+  - name: edit
+    skill: pipelines/concert-visuals/edit-director
+    required_artifacts_in:
+      - scene_plan
+      - asset_manifest
+    optional_artifacts_in:
+      - script
+    produces:
+      - edit_decisions
+    tools_available: []
+    checkpoint_required: true
+    human_approval_default: false
+    review_focus:
+      - Every cut time is a song_map beat or downbeat time, not a rounded number
+      - Cut density follows section energy (no cutting every beat for four minutes)
+      - render_runtime carried forward unchanged from the brief
+    success_criteria:
+      - Schema-valid edit_decisions artifact
+      - song_sync total duration equals the track duration to the frame; free_run adds a holdable tail
+
+  - name: compose
+    skill: pipelines/concert-visuals/compose-director
+    required_artifacts_in:
+      - edit_decisions
+      - asset_manifest
+    optional_artifacts_in:
+      - scene_plan
+      - brief
+    produces:
+      - render_report
+      - final_review
+    required_tools:
+      - hyperframes_compose
+    optional_tools:
+      - video_compose
+      - video_stitch
+      - video_trimmer
+      - color_grade
+    tools_available:
+      - hyperframes_compose
+      - video_compose
+      - video_stitch
+      - video_trimmer
+      - color_grade
+    checkpoint_required: true
+    human_approval_default: false
+    review_focus:
+      - Output resolution equals the canvas pixel map exactly
+      - Sync proof - song_sync beat hits line up with the audio across the whole song; free_run has no hit that depends on one beat
+      - Loops are seamless (first frame equals last frame + 1) and exact bar lengths
+      - Photosensitive check passed (no more than 3 bright flashes in any 1-second window)
+      - "render_runtime in edit_decisions matches the brief — silent swap is a CRITICAL governance violation"
+    success_criteria:
+      - Schema-valid render_report artifact
+      - Show masters and review copies exist and pass ffprobe validation
+
+  - name: publish
+    skill: pipelines/concert-visuals/publish-director
+    required_artifacts_in:
+      - render_report
+      - final_review
+    optional_artifacts_in:
+      - brief
+    produces:
+      - publish_log
+    tools_available: []
+    checkpoint_required: true
+    human_approval_default: true
+    review_focus:
+      - Show package is labelled by setlist order and song, with codec/resolution/fps in each name
+      - Playback cue sheet tells the operator how to start each file in sync
+      - Silent show masters and audio review copies are clearly separated
+    success_criteria:
+      - Schema-valid publish_log artifact
+      - Show folder contains masters, review copies, cue sheet and loop index (vj_loops)

@@ -198,11 +198,17 @@ class RemotionCaptionBurn(BaseTool):
                         trailing = raw[-1]
                     if fixed != raw and not fixed.endswith(trailing):
                         fixed = fixed + trailing
-                    captions.append({
+                    cap = {
                         "word": fixed,
                         "startMs": int(w["start"] * 1000),
                         "endMs": int(w["end"] * 1000),
-                    })
+                    }
+                    # Carry the caller's page breaks through. Without this a
+                    # caption page can straddle two speakers, which reads as
+                    # one person saying both lines.
+                    if w.get("pageBreakAfter"):
+                        cap["pageBreakAfter"] = True
+                    captions.append(cap)
             elif "text" in seg:
                 text_words = seg["text"].strip().split()
                 dur = seg["end"] - seg["start"]
@@ -312,7 +318,9 @@ class RemotionCaptionBurn(BaseTool):
 
         # Build props JSON
         props = {
-            "videoSrc": f"public/talking-head/{video_filename}",
+            # staticFile() already resolves relative to public/, so the prefix
+            # must not be included or Remotion throws at render time.
+            "videoSrc": f"talking-head/{video_filename}",
             "captions": captions,
             "overlays": overlays or [],
             "wordsPerPage": words_per_page,

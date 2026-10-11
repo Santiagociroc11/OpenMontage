@@ -1,0 +1,4 @@
+interface:
+  display_name: "Video SaaS premium"
+  short_description: "Videos de lanzamiento SaaS estilo Apple/Figma en 4K con UI real, 3D, voz y música"
+  default_prompt: "Usa $video-saas-premium para hacer un video de lanzamiento de este producto."

@@ -295,6 +295,8 @@ class HyperFramesCompose(BaseTool):
                 [npm, "view", cls._NPM_PACKAGE, "version"],
                 capture_output=True,
                 text=True,
+                encoding="utf-8",
+                errors="replace",
                 timeout=5,
             )
         except subprocess.TimeoutExpired:
@@ -345,6 +347,8 @@ class HyperFramesCompose(BaseTool):
                 [npx, "--yes", cls._NPM_PACKAGE, "doctor", "--json"],
                 capture_output=True,
                 text=True,
+                encoding="utf-8",
+                errors="replace",
                 timeout=20,
             )
         except subprocess.TimeoutExpired:
@@ -1372,6 +1376,10 @@ class HyperFramesCompose(BaseTool):
                 cmd,
                 capture_output=True,
                 text=True,
+                # The CLI prints UTF-8 (✓/✗ glyphs); the Windows default
+                # cp1252 decode crashes the reader and drops the output.
+                encoding="utf-8",
+                errors="replace",
                 timeout=timeout,
                 cwd=str(cwd) if cwd else None,
                 check=False,
